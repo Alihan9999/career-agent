@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Your personal data (real resume content, contact info — never commit)
+data/*.md
+!data/*.example.md
+
+# Generated application output (contains personal resume/cover letter data)
+output/*/
+!output/.gitkeep
+
+# Claude Code local settings (machine-specific permissions)
+.claude/
+
+# Environment variables (Google Form IDs, any future API keys)
+.env
+.env.local
+
+# OS junk
+.DS_Store
+Thumbs.db
