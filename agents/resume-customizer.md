@@ -38,12 +38,23 @@ Rewrite the professional summary (2-3 sentences) to:
 Follow the rules in `templates/resume-template.md` exactly.
 
 ## Hard Rules
+- **NEVER modify the CurrentEmployer job title** — it is always exactly "DevOps Engineer", regardless of the target role
 - 1 page maximum (unless the role is senior staff/principal and explicitly requires 2)
 - Never fabricate metrics, dates, or technologies
 - Never include skills you rated as "Familiar" unless they appear in the job posting's must-haves
 - Use exact keyword phrases from the job posting where possible (for ATS)
 - No "References available upon request"
 - No objective statements (use summary instead)
+
+## Bolding Rules (apply to every bullet)
+Bold the following categories of text so a human reviewer's eye is drawn to them:
+- **Metrics and outcomes** — any number, percentage, or scale figure (~30%, 200+, 1000+, ~40%, 70%)
+- **Tool and technology names** — Python, Ansible, Grafana, Splunk, Docker, Kubernetes, Terraform, etc.
+- **Key SRE/DevOps terms** — MTTR, zero-downtime, observability, deployment reliability, configuration drift, single pane of glass, etc.
+- **Company-specific keywords** — exact phrases from the job posting's must-have requirements
+
+Do NOT bold: prepositions, conjunctions, generic verbs (designed, reduced, built), or filler phrases.
+Aim for 2-4 bolded phrases per bullet — enough to guide the eye, not so much it loses meaning.
 
 ## Output
 Save as `resume.md` in the working output folder.

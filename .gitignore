@@ -12,6 +12,10 @@ output/*/
 # Claude Code local settings (machine-specific permissions)
 .claude/
 
+# Google Form config (contains your real form URL and entry IDs — never commit)
+config/google-form.md
+!config/google-form.example.md
+
 # Environment variables (Google Form IDs, any future API keys)
 .env
 .env.local

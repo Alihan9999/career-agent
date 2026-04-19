@@ -29,21 +29,16 @@ curl -X POST "https://docs.google.com/forms/d/e/FORM_ID/formResponse" \
   # ... more fields
 ```
 
-## Default Field Mapping
-The form fields are defined in `config/google-form.md`. Typical fields:
+## Field Mapping
 
-| Form Field | Source |
-|---|---|
-| Company Name | job-analysis.json → company_name |
-| Job Title | job-analysis.json → job_title |
-| Job URL | job-analysis.json → job_url |
-| Date Applied | Today's date (YYYY-MM-DD) |
-| Location | job-analysis.json → location |
-| Remote Policy | job-analysis.json → remote_policy |
-| Salary Range | job-analysis.json → salary_range |
-| ATS Score | ats-report.md → score |
-| Resume File | Output folder path + /resume.md |
-| Notes | Any red flags from job-analysis.json |
+| Form Field | Source | Notes |
+|---|---|---|
+| Role | job-analysis.json → job_title | |
+| Company | job-analysis.json → company_name | |
+| Pay Range | job-analysis.json → salary_range | Use "Not Listed" if blank. Assign to a single-quoted shell variable before use to prevent `$` from being expanded (see curl pattern below) |
+| Status | hardcoded | Always: `Applied / Waiting` |
+| Job Link | job-analysis.json → job_url | |
+| Notes | ats-report.md | Format: "ATS Score: X% — [top gaps if any]" |
 
 ## Output
 Report to the orchestrator:
