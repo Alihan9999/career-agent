@@ -38,6 +38,7 @@ Rewrite the professional summary (2-3 sentences) to:
 Follow the rules in `templates/resume-template.md` exactly.
 
 ## Hard Rules
+- **NEVER use em dashes (—) anywhere** — use commas, periods, or pipe (|) instead
 - **NEVER modify the CurrentEmployer job title** — it is always exactly "DevOps Engineer", regardless of the target role
 - 1 page maximum (unless the role is senior staff/principal and explicitly requires 2)
 - Never fabricate metrics, dates, or technologies

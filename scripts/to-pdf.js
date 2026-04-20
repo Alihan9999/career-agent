@@ -105,7 +105,10 @@ const spacingSteps = [
   const md = fs.readFileSync(inputFile, 'utf8');
   const html = marked(md);
 
-  const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+  const browser = await puppeteer.launch({
+    executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    args: ['--no-sandbox'],
+  });
   const page = await browser.newPage();
 
   await page.setViewport({ width: LETTER_WIDTH_PX, height: LETTER_HEIGHT_PX });
