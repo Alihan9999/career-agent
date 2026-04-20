@@ -40,6 +40,7 @@ Follow the rules in `templates/resume-template.md` exactly.
 ## Hard Rules
 - **NEVER use em dashes (—) anywhere** — use commas, periods, or pipe (|) instead
 - **NEVER modify the CurrentEmployer job title** — it is always exactly "DevOps Engineer", regardless of the target role
+- **NEVER repeat a skill across multiple rows in the Technical Skills section** — each technology appears exactly once; languages (Python, Shell/Bash, etc.) belong only in the Languages row, not in IaC, Automation, or any other row
 - 1 page maximum (unless the role is senior staff/principal and explicitly requires 2)
 - Never fabricate metrics, dates, or technologies
 - Never include skills you rated as "Familiar" unless they appear in the job posting's must-haves
