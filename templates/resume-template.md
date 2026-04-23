@@ -11,21 +11,24 @@ The Resume Customizer must produce output that exactly follows these rules.
 - Font size: 11pt body, 14pt name, 12pt section headers
 
 ## Section Order (in this order, no exceptions)
-1. Header (name + contact)
-2. Summary (2-3 sentences)
-3. Experience
-4. Projects (if space permits and relevant)
-5. Skills
-6. Education
+1. Header (`# Name` + contact line)
+2. `## Professional Experience`
+3. `## Projects` (if space permits and relevant)
+4. `## Technical Skills`
+5. `## Education`
+
+**No summary section.** Section headers use title case, not ALL CAPS.
 
 ## Header Format
 ```
-FIRSTNAME LASTNAME
-email@example.com | (555) 123-4567 | City, State | linkedin.com/in/handle | github.com/handle
+# FIRSTNAME LASTNAME
+email@example.com | (555) 123-4567 | City, State | [LinkedIn](https://linkedin.com/in/handle) | [Portfolio](https://yoursite.com)
 ```
-- Name on its own line, ALL CAPS or Title Case
-- All contact info on one line, separated by ` | `
+- Name uses `#` (h1) so it renders centered and large in the PDF
+- All contact info on one line immediately below, separated by ` | `
+- LinkedIn and Portfolio as markdown links — display text only, no raw long URLs
 - No photo, no address beyond city/state
+- Go straight into the first `##` section — no `---` divider, no blank line between header and section
 
 ## Section Headers
 ```
@@ -37,14 +40,14 @@ email@example.com | (555) 123-4567 | City, State | linkedin.com/in/handle | gith
 
 ## Experience Entry Format
 ```
-### Job Title — Company Name
-*Month Year – Month Year* | City, State (or Remote)
+**Company Name** | ***Job Title*** | *Month Year – Month Year* | City, State (or Remote)
 
 - Bullet starting with strong action verb
 - Bullet with metric
 - Bullet
 ```
-- Date and location on same line as header
+- Company, job title, date, and location all on ONE line as a bold paragraph — no h3 header
+- Job title in bold italic (`***text***`), date in italic (`*text*`)
 - Max 4-5 bullets per role
 - Bullets: plain hyphens, no nested bullets
 - Each bullet: one sentence, past tense (except current role)
@@ -52,23 +55,29 @@ email@example.com | (555) 123-4567 | City, State | linkedin.com/in/handle | gith
 
 ## Projects Section Format
 ```
-### Project Name | [github.com/link](url) | Live: [url](url)
+**Project Name** | Brief descriptor (e.g. Internal Production System)
 *Tech stack: list, of, technologies*
 
 - What it does in one line
 - Key technical achievement
 ```
+- Project name as bold paragraph (not h3)
+- Tech stack on next line in italics — same paragraph block (no blank line between name and stack)
 - Max 2 bullets
-- Include URLs
+- Blank line before the next project name (so `ul + p` CSS adds visual separation)
 
 ## Skills Section Format
 ```
 **Languages:** Python, Go, TypeScript
+
 **Frameworks:** React, FastAPI, Django
+
 **Cloud:** AWS (EC2, RDS, Lambda), GCP
+
 **Tools:** Docker, Kubernetes, GitHub Actions, Terraform
 ```
-- Grouped by category on single lines
+- Each category on its own paragraph — blank line between every row
+- Blank lines are required so each row renders as a separate line in the PDF
 - Only include skills at Proficient or Expert level (from skills.md)
 - Use exact terminology from the job posting where possible
 

@@ -41,8 +41,9 @@ function buildResumeCss({ padding, lineHeight, sectionGap, bulletGap, skillsLine
       font-size: 11pt;
       font-weight: bold;
       margin-top: ${sectionGap}px;
-      margin-bottom: 3px;
-      border: none;
+      margin-bottom: 4px;
+      border-bottom: 1.5px solid #000;
+      padding-bottom: 2px;
       text-transform: none;
       letter-spacing: 0;
     }
@@ -50,11 +51,6 @@ function buildResumeCss({ padding, lineHeight, sectionGap, bulletGap, skillsLine
       font-size: 10pt;
       margin-bottom: 2px;
       line-height: ${lineHeight};
-    }
-    h2 + p br { display: block; content: ""; }
-    h2 + p {
-      margin-bottom: 2px;
-      line-height: ${skillsLineHeight};
     }
     ul {
       list-style: none;

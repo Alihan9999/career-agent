@@ -28,25 +28,23 @@ For each selected experience bullet:
 - Ensure it has a metric or outcome — if the source has one, preserve it exactly; if not, do not invent one
 - Lead with a strong action verb
 
-### Step 4 — Adapt the Summary
-Rewrite the professional summary (2-3 sentences) to:
-- Mirror the exact job title from the posting
-- Reference the top 2 technical requirements
-- Sound like a person, not a template
-
-### Step 5 — Format
+### Step 4 — Format
 Follow the rules in `templates/resume-template.md` exactly.
 
 ## Hard Rules
 - **NEVER use em dashes (—) anywhere** — use commas, periods, or pipe (|) instead
-- **NEVER modify the CurrentEmployer job title** — it is always exactly "DevOps Engineer", regardless of the target role
+- **NEVER modify the current employer's job title** — preserve it exactly as written in `data/experience.md`, regardless of the target role
 - **NEVER repeat a skill across multiple rows in the Technical Skills section** — each technology appears exactly once; languages (Python, Shell/Bash, etc.) belong only in the Languages row, not in IaC, Automation, or any other row
+- **ALWAYS use `#` (h1) for the applicant name** — this is what makes the name large and centered in the PDF
+- **ALWAYS put a blank line between every skill row** — without blank lines they collapse into one paragraph block in the PDF
+- **NEVER use `###` (h3) for experience or project entries** — use bold paragraphs: `**Company** | ***Title*** | *Date*`
+- **Section headers use title case** — `## Professional Experience`, `## Projects`, `## Technical Skills`, `## Education`
 - 1 page maximum (unless the role is senior staff/principal and explicitly requires 2)
 - Never fabricate metrics, dates, or technologies
 - Never include skills you rated as "Familiar" unless they appear in the job posting's must-haves
 - Use exact keyword phrases from the job posting where possible (for ATS)
 - No "References available upon request"
-- No objective statements (use summary instead)
+- No summary or objective section — go straight from header into Experience
 
 ## Bolding Rules (apply to every bullet)
 Bold the following categories of text so a human reviewer's eye is drawn to them:

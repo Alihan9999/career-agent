@@ -51,7 +51,12 @@ user before running any part of the pipeline.
 
 ### Phase 4 — Delivery
 - Spawn **Output Packager** — saves all files to `output/<CompanyName>-<YYYY-MM-DD>/`
-  including resume.pdf (generated via Puppeteer)
+  then run PDF generation for BOTH files separately:
+  ```
+  node scripts/to-pdf.js output/<Company>-<date>/resume.md
+  node scripts/to-pdf.js output/<Company>-<date>/cover-letter.md
+  ```
+  The script detects resume vs cover letter by filename — each must be run independently.
 - Spawn **Form Filler** with the output folder path + job URL + company name
 
 ---
