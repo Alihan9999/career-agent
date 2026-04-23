@@ -46,12 +46,28 @@ Verify the resume has no ATS-breaking formatting:
 ## Output
 1. Updated `resume.md` with keyword gaps filled
 2. Updated `cover-letter.md` if any critical keywords were missing
-3. `ats-report.md` with:
-   - ATS Score: X%
-   - Keywords present: [list]
-   - Keywords added: [list]  
-   - Keywords missing (not in applicant background): [list]
-   - Formatting issues fixed: [list]
+3. `ats-report.md` — use EXACTLY this section structure (the gap analysis script parses it):
+
+```
+## ATS Score: X%
+
+## Keywords: PRESENT
+- **keyword one**
+- **keyword two**
+
+## Keywords: ADDED
+- **keyword three**
+
+## Keywords: MISSING
+- **keyword four**
+- **keyword five**
+
+## Formatting Issues Fixed
+- [any formatting fixes applied]
+```
+
+The `## Keywords: MISSING` section heading and `- **keyword**` bullet format are required exactly
+as shown — `scripts/gap-analysis.py` parses this file to aggregate gaps across all applications.
 
 ## Rules
 - Never add a skill the applicant does not have

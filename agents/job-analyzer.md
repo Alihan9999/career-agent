@@ -59,7 +59,11 @@ Return a JSON-like structured document saved as `job-analysis.json`:
   "company_stage": "startup | growth | enterprise | public",
   
   "role_seniority": "junior | mid | senior | staff | principal | lead | manager",
-  
+
+  "years_required": "exact years requirement as stated, e.g. '5+ years', '3-5 years', or null if not specified",
+
+  "experience_gate": "HARD_SKIP | FLAG | PROCEED",
+
   "red_flags": [],
   
   "tone": "formal | casual | mission-driven | engineering-focused",
@@ -69,6 +73,12 @@ Return a JSON-like structured document saved as `job-analysis.json`:
   ]
 }
 ```
+
+## Experience Gate Rules
+Set `experience_gate` based on these exact rules (the orchestrator reads this field):
+- `"HARD_SKIP"` — role requires 5+ years, OR title is Senior/Staff/Principal with no year count
+- `"FLAG"` — role requires 4+ years (ask user before proceeding)
+- `"PROCEED"` — everything else (mid-level, intermediate, 3+ years, no requirement stated)
 
 ## Notes
 - Do NOT invent data that isn't in the posting — leave fields blank if unknown

@@ -20,6 +20,15 @@ config/google-form.md
 .env
 .env.local
 
+# Gap analysis reports (reveals job search targets — keep private)
+analysis/
+
+# Project schematics (reveals skill gaps and job search strategy — keep private)
+projects/
+
+# PDF artifacts
+*.pdf
+
 # OS junk
 .DS_Store
 Thumbs.db
