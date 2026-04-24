@@ -22,12 +22,12 @@ The Resume Customizer must produce output that exactly follows these rules.
 ## Header Format
 ```
 # FIRSTNAME LASTNAME
-email@example.com | (555) 123-4567 | City, State | [LinkedIn](https://linkedin.com/in/handle) | [Portfolio](https://yoursite.com)
+email@example.com | (555) 123-4567 | linkedin.com/in/yourhandle | yoursite.com
 ```
 - Name uses `#` (h1) so it renders centered and large in the PDF
 - All contact info on one line immediately below, separated by ` | `
-- LinkedIn and Portfolio as markdown links — display text only, no raw long URLs
-- No photo, no address beyond city/state
+- LinkedIn and Portfolio as plain visible URLs — not masked as link text
+- No city/state in header — location is already shown in the experience entry
 - Go straight into the first `##` section — no `---` divider, no blank line between header and section
 
 ## Section Headers
