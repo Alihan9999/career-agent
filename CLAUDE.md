@@ -25,13 +25,13 @@ Emphasize: distributed systems, Go, Kubernetes
 
 Run gap analysis across all applications:
 ```
-analyze my gaps
+/analyze-gaps
 ```
 
 Generate a project schematic to fill a skill gap:
 ```
-give me a project schematic
-give me a project for Go
+/project-mentor
+/project-mentor Go
 ```
 
 ---
@@ -81,10 +81,10 @@ Job URL
            [7] Form Filler      — Submits Google tracking form
 ```
 
-Standalone agents (run on demand, not part of the pipeline):
+Standalone slash commands (run on demand, not part of the pipeline):
 ```
-[Gap Analyzer]     — Scans all output/ folders, ranks recurring skill gaps by importance
-[Project Mentor]   — Generates step-by-step project schematics to fill specific skill gaps
+/analyze-gaps      — Scans all output/ folders, ranks recurring skill gaps by importance
+/project-mentor    — Generates step-by-step project schematics to fill specific skill gaps
 ```
 
 ---
@@ -108,8 +108,12 @@ career-agent/
 │   ├── cover-letter-writer.md
 │   ├── ats-optimizer.md
 │   ├── form-filler.md
-│   ├── gap-analyzer.md          ← On-demand: scans gaps across all applications
-│   └── project-mentor.md        ← On-demand: generates project schematics
+│   ├── gap-analyzer.md          ← Backing agent for /analyze-gaps
+│   └── project-mentor.md        ← Backing agent for /project-mentor
+├── .claude/
+│   └── commands/
+│       ├── analyze-gaps.md      ← /analyze-gaps slash command
+│       └── project-mentor.md   ← /project-mentor slash command
 ├── scripts/
 │   └── gap-analysis.py          ← Run by gap-analyzer agent
 ├── templates/
@@ -155,8 +159,8 @@ career-agent/
 | ATS Optimizer | Every pipeline | resume.md + cover-letter.md + job-analysis | Revised docs + `ats-report.md` |
 | Output Packager | Every pipeline | All outputs | `/output/<Company>-<date>/` folder |
 | Form Filler | Every pipeline | Output folder + job URL | Google Form submission |
-| Gap Analyzer | On demand | All output/ folders | `analysis/gap-analysis-<date>.md` |
-| Project Mentor | On demand | Latest gap analysis | `projects/<name>.md` schematic |
+| Gap Analyzer | `/analyze-gaps` | All output/ folders | `analysis/gap-analysis-<date>.md` |
+| Project Mentor | `/project-mentor` | Latest gap analysis | `projects/<name>.md` schematic |
 
 ---
 

@@ -20,54 +20,67 @@ REPORT_DIR = Path(__file__).parent.parent / "analysis"
 REPORT_DIR.mkdir(exist_ok=True)
 MIN_APPLICATIONS = 1  # analyze all available applications
 
-# Importance weights — these gaps matter more than others
+# Canonical gap names and their importance weights.
+# Add aliases in ALIASES below — do not add duplicates here.
 IMPORTANCE_WEIGHTS = {
-    "go": 10,
-    "golang": 10,
-    "datadog": 9,
-    "gcp": 8,
-    "google cloud": 8,
-    "5+ years": 9,
-    "senior": 7,
-    "typescript": 7,
-    "rust": 6,
-    "node.js": 6,
-    "postgres": 5,
-    "postgresql": 5,
-    "istio": 5,
-    "service mesh": 5,
-    "backstage": 4,
-    "argocd": 4,
-    "helm": 4,
-    "tanka": 4,
-    "kustomize": 4,
-    "opentelemetry": 4,
-    "sentry": 4,
-    "cmake": 6,
-    "slurm": 6,
-    "bare metal": 6,
-    "pre-sales": 3,
-    "data pipelines": 5,
-    "forensics": 4,
-    "saml": 4,
-    "scim": 4,
-    "oidc": 5,
-    "mtls": 5,
-    "spiffe": 5,
-    "spire": 5,
-    "redis": 3,
-    "openSearch": 3,
-    "workato": 3,
-    "okta workflows": 3,
-    "google workspace": 3,
-    "zendesk": 3,
-    "dns": 4,
-    "tls": 4,
-    "load balancer": 3,
-    "networking": 4,
-    "finops": 3,
-    "cost optimization": 3,
+    "go":               10,   # highest ROI — blocks ~50% of roles
+    "datadog":          9,
+    "experience gate":  9,    # merged: "5+ years" + "senior" title filter
+    "gcp":              8,    # merged: "google cloud"
+    "typescript":       7,
+    "rust":             6,
+    "node.js":          6,
+    "bare metal":       6,
+    "postgres":         5,    # merged: "postgresql"
+    "istio":            5,
+    "service mesh":     5,
+    "argocd":           5,
+    "oidc":             5,
+    "mtls":             5,
+    "spiffe":           5,
+    "spire":            5,
+    "data pipelines":   5,
+    "backstage":        4,
+    "helm":             4,
+    "kustomize":        4,
+    "opentelemetry":    4,
+    "tanka":            4,
+    "forensics":        4,
+    "saml":             4,
+    "scim":             4,
+    "dns":              4,
+    "tls":              4,
+    "networking":       4,
+    "sentry":           3,
+    "redis":            3,
+    "opensearch":       3,    # merged: "elasticsearch"
+    "load balancer":    3,
+    "finops":           3,
+    "cost optimization":3,
+    "cmake":            2,    # role-specific (HPC/systems)
+    "slurm":            2,    # role-specific (HPC)
+    "workato":          2,
+    "okta workflows":   2,
+    "google workspace": 2,
+    "zendesk":          2,
 }
+
+# Aliases — all normalized to their canonical key before counting.
+# Keeps the report clean: "golang" and "go" show up as one gap, not two.
+ALIASES = {
+    "golang":        "go",
+    "google cloud":  "gcp",
+    "postgresql":    "postgres",
+    "5+ years":      "experience gate",
+    "senior":        "experience gate",
+    "elasticsearch": "opensearch",
+    "elastic":       "opensearch",
+}
+
+def normalize(gap: str) -> str:
+    """Resolve aliases to their canonical name."""
+    return ALIASES.get(gap.lower(), gap.lower())
+
 
 def parse_ats_missing(ats_path: Path) -> list[str]:
     """Extract missing keywords from ats-report.md."""
@@ -105,11 +118,17 @@ def parse_job_analysis_gaps(job_path: Path) -> list[str]:
 
 
 def extract_gap_tokens(text: str) -> list[str]:
-    """Pull recognizable gap keywords from free text."""
+    """Pull recognizable gap keywords from free text, normalized to canonical names."""
     tokens = []
-    for keyword in IMPORTANCE_WEIGHTS:
+    seen = set()
+    # Check aliases first so e.g. "golang" matches before "go"
+    all_keywords = list(ALIASES.keys()) + list(IMPORTANCE_WEIGHTS.keys())
+    for keyword in all_keywords:
         if keyword in text.lower():
-            tokens.append(keyword)
+            canonical = normalize(keyword)
+            if canonical not in seen:
+                tokens.append(canonical)
+                seen.add(canonical)
     return tokens
 
 
@@ -153,19 +172,21 @@ def run_analysis():
         for gap in parse_ats_missing(ats_path):
             tokens = extract_gap_tokens(gap) or [gap]
             for token in tokens:
-                if token not in seen_this_app:
-                    gap_counter[token] += 1
-                    gap_sources[token].append(company)
-                    seen_this_app.add(token)
+                canonical = normalize(token)
+                if canonical not in seen_this_app:
+                    gap_counter[canonical] += 1
+                    gap_sources[canonical].append(company)
+                    seen_this_app.add(canonical)
 
         # From job analysis red flags
         for flag in parse_job_analysis_gaps(job_path):
             tokens = extract_gap_tokens(flag)
             for token in tokens:
-                if token not in seen_this_app:
-                    gap_counter[token] += 1
-                    gap_sources[token].append(company)
-                    seen_this_app.add(token)
+                canonical = normalize(token)
+                if canonical not in seen_this_app:
+                    gap_counter[canonical] += 1
+                    gap_sources[canonical].append(company)
+                    seen_this_app.add(canonical)
 
     # Filter to gaps appearing in 2+ applications
     filtered = {k: v for k, v in gap_counter.items() if v >= 2}
@@ -194,8 +215,6 @@ def run_analysis():
         f"## Ranked Gaps",
         f"",
     ]
-
-    priority_labels = {range(0, 3): "Low", range(3, 8): "Medium", range(8, 999): "High"}
 
     def get_priority(score: int) -> str:
         if score >= 20:
@@ -247,23 +266,22 @@ def run_analysis():
     ]
 
     action_map = {
-        "go": "Build a Go CLI tool or Kubernetes controller and publish to GitHub.",
-        "golang": "Build a Go CLI tool or Kubernetes controller and publish to GitHub.",
-        "datadog": "Instrument a sample app with Datadog APM, build monitors and SLOs on free trial.",
-        "gcp": "Rebuild the AWS Cost Optimization Engine equivalent on GCP free tier.",
-        "google cloud": "Rebuild the AWS Cost Optimization Engine equivalent on GCP free tier.",
-        "typescript": "Build a Node.js automation script or CLI in TypeScript; publish to GitHub.",
-        "5+ years": "Target mid-level (3+ year) roles — avoid Senior/Staff titles.",
-        "senior": "Avoid Senior titles — they imply 5+ years and will hard-filter at ATS.",
-        "data pipelines": "Build a Python security log ingestion pipeline (CloudTrail → Splunk/ELK).",
-        "postgres": "Add a Postgres-backed project; document schema design and query optimization.",
-        "postgresql": "Add a Postgres-backed project; document schema design and query optimization.",
-        "istio": "Add Istio service mesh to a local Kubernetes cluster demo; document it.",
-        "service mesh": "Add Istio service mesh to a local Kubernetes cluster demo; document it.",
-        "argocd": "Set up ArgoCD on a local cluster; build a GitOps pipeline demo.",
-        "helm": "Author a Helm chart for a multi-service app; publish to GitHub.",
-        "oidc": "Implement an OIDC auth flow in a small Python or Go service.",
-        "backstage": "Set up a local Backstage instance with a custom plugin; document it.",
+        "go":               "Build a Go Kubernetes operator or CLI tool and publish to GitHub.",
+        "datadog":          "Instrument a sample app with Datadog APM, build monitors and SLOs on free trial.",
+        "gcp":              "Rebuild the AWS Cost Optimization Engine equivalent on GCP free tier.",
+        "experience gate":  "Target mid-level (3+ year) roles — avoid Senior/Staff titles in search filters.",
+        "typescript":       "Build a Node.js automation script or CLI in TypeScript; publish to GitHub.",
+        "rust":             "Build a Rust CLI tool (e.g. a log parser or k8s resource lister); publish to GitHub.",
+        "postgres":         "Add a Postgres-backed project; document schema design and query optimization.",
+        "istio":            "Add Istio service mesh to a local Kubernetes cluster demo; document it.",
+        "service mesh":     "Add Istio service mesh to a local Kubernetes cluster demo; document it.",
+        "argocd":           "Set up ArgoCD on a local cluster; build a GitOps pipeline demo.",
+        "helm":             "Author a Helm chart for a multi-service app; publish to GitHub.",
+        "oidc":             "Implement an OIDC auth flow in a small Python or Go service.",
+        "backstage":        "Set up a local Backstage instance with a custom plugin; document it.",
+        "opentelemetry":    "Instrument a Go or Python service with OTEL traces; ship to Datadog or Jaeger.",
+        "data pipelines":   "Build a Python log ingestion pipeline (CloudTrail → Splunk/ELK).",
+        "bare metal":       "Document server rack provisioning experience from the 1000+ Linux server fleet.",
     }
 
     added_actions = set()

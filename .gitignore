@@ -9,8 +9,10 @@ data/*.md
 output/*/
 !output/.gitkeep
 
-# Claude Code local settings (machine-specific permissions)
-.claude/
+# Claude Code local settings (machine-specific permissions — keep private)
+.claude/settings.json
+.claude/settings.local.json
+# .claude/commands/ is intentionally tracked so collaborators get the slash commands
 
 # Google Form config (contains your real form URL and entry IDs — never commit)
 config/google-form.md
