@@ -53,6 +53,14 @@ email@example.com | (555) 123-4567 | linkedin.com/in/yourhandle | yoursite.com
 - Each bullet: one sentence, past tense (except current role)
 - Lead with verb: Built, Reduced, Designed, Led, Implemented, Shipped, Scaled, etc.
 
+### Bolding within bullets
+Bold two things in every bullet — no more, no less:
+1. **Key technology or tool** — the most relevant tech name from the job posting (e.g. `**Ansible**`, `**Kubernetes**`, `**Terraform**`)
+2. **Metric or outcome** — the quantified result (e.g. `**~25%**`, `**1,000+**`, `**200+**`, `**~40%**`)
+
+If a bullet has no metric, bold the two most important technology names instead.
+Never bold generic words (e.g. "automation", "platform", "system") — only proper tool/technology names and numbers.
+
 ## Projects Section Format
 ```
 **Project Name** | Brief descriptor (e.g. Internal Production System)
@@ -63,8 +71,9 @@ email@example.com | (555) 123-4567 | linkedin.com/in/yourhandle | yoursite.com
 ```
 - Project name as bold paragraph (not h3)
 - Tech stack on next line in italics — same paragraph block (no blank line between name and stack)
-- Max 2 bullets
+- Max 2 bullets — apply the same bolding rules as experience bullets
 - Blank line before the next project name (so `ul + p` CSS adds visual separation)
+- Project URL (if public) goes on the descriptor line: `**Project Name** | Personal — github.com/user/repo` — never repeat a URL already in the header
 
 ## Skills Section Format
 ```
