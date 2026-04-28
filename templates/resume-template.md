@@ -105,3 +105,4 @@ Never bold generic words (e.g. "automation", "platform", "system") — only prop
 - Numbers: spell out under 10 in prose, use digits for metrics (increased speed by 3x, managed 12 engineers)
 - Dates: "Jan 2023" format (abbreviated month + year)
 - Consistency: if you use dashes, use them everywhere; if bullets, everywhere
+- Never use em dashes (—) anywhere in the resume or cover letter; they read as AI-generated. Use commas, semicolons, or pipes (|) depending on context
