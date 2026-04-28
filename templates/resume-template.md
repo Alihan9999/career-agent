@@ -73,7 +73,23 @@ Never bold generic words (e.g. "automation", "platform", "system") — only prop
 - Tech stack on next line in italics — same paragraph block (no blank line between name and stack)
 - Max 2 bullets — apply the same bolding rules as experience bullets
 - Blank line before the next project name (so `ul + p` CSS adds visual separation)
-- Project URL (if public) goes on the descriptor line: `**Project Name** | Personal — github.com/user/repo` — never repeat a URL already in the header
+- Project URL (if public) goes on the descriptor line: `**Project Name** | Personal | github.com/user/repo` — never repeat a URL already in the header
+
+### Project differentiation rule (CRITICAL)
+Every project must add something the experience section does not already show. Before including a project, check it against every experience bullet. If the project uses the same tools AND the same metric AND the same domain as an experience bullet, cut it or find a different angle to tell.
+
+Specifically:
+- Never repeat the same metric in both experience and a project (e.g., "MTTR by ~25%" appearing in both sections means one is wasted)
+- Never repeat the same tool list if the framing is also identical
+- Each project should contribute at least one of: a new tool not in experience, a new domain (cost optimization vs. observability vs. orchestration), a new metric, or a new technical depth (e.g., homelab shows Datadog and Go which work experience does not)
+
+Project priority order for selection:
+1. Projects that cover a gap keyword from the job posting (e.g., Datadog, Go, ArgoCD)
+2. Projects that show a different domain than the experience bullets
+3. Projects that add a tool not present anywhere in the experience section
+4. Drop a project entirely rather than include one that only repeats what experience already covers
+
+If only two projects qualify after applying this rule, use two — a tight two-project section is stronger than three where one is redundant.
 
 ## Skills Section Format
 ```
