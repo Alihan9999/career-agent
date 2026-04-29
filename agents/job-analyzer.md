@@ -80,6 +80,41 @@ Set `experience_gate` based on these exact rules (the orchestrator reads this fi
 - `"FLAG"` — role requires 4+ years (ask user before proceeding)
 - `"PROCEED"` — everything else (mid-level, intermediate, 3+ years, no requirement stated)
 
+## Legitimacy Assessment
+
+After extracting structured data, assess whether the posting is a real, active opportunity. Add a `legitimacy` block to the JSON:
+
+```json
+"legitimacy": {
+  "tier": "HIGH_CONFIDENCE | PROCEED_WITH_CAUTION | SUSPICIOUS",
+  "signals": ["positive signals observed"],
+  "red_flags": ["specific concerns if any"]
+}
+```
+
+### Tier definitions
+
+**HIGH_CONFIDENCE** — posting looks legitimate and active. Meets most of:
+- Posted within 30 days (or date unknown but apply button is live)
+- Specific, technical requirements (not copy-paste generic)
+- Named team, real hiring manager, or specific product context
+- Company is verifiably real and active (public, funded, has products)
+- Salary listed or consistent with market for the role
+
+**PROCEED_WITH_CAUTION** — some concerns but not disqualifying. Examples:
+- Posted 30-60 days ago with no update
+- Requirements are unusually vague or generic
+- No salary, no team context, no specific product mentioned
+- Company hard to verify (no website, no recent news)
+- Posting language is copy-pasted boilerplate
+
+**SUSPICIOUS** — multiple red flags. Examples:
+- Posted 60+ days ago (likely ghost job — role already filled or never real)
+- Apply button leads nowhere or requires unusual personal info upfront
+- Extreme requirement mismatch (asking for 10+ years for a junior role)
+- Job aggregator only (not found on company's own careers page)
+- Company has no online presence or product
+
 ## Notes
 - Do NOT invent data that isn't in the posting — leave fields blank if unknown
 - ATS keywords should be exact phrases, not paraphrases

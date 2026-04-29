@@ -39,6 +39,12 @@ user before running any part of the pipeline.
 - If the role is clearly outside DevOps / SRE / Platform / Infrastructure / Security
   (e.g., Frontend Engineer, Account Executive, Data Scientist): flag it and ask before running.
 
+### Gate 4: Legitimacy (soft — display always, block only on SUSPICIOUS)
+After the Job Analyzer runs, read `legitimacy.tier` from job-analysis.json:
+- `HIGH_CONFIDENCE`: display a one-line note and continue
+- `PROCEED_WITH_CAUTION`: display the red flags and continue (do not block)
+- `SUSPICIOUS`: display the red flags, warn the user this may be a ghost job or scam, and ask whether to proceed before running any further agents
+
 ---
 
 ## Execution Order (run after all gates pass)
@@ -71,7 +77,7 @@ user before running any part of the pipeline.
 
 After all agents complete:
 ```
-Application ready: [Company Name] — [Job Title]
+Application ready: [Company Name] | [Job Title]
 
 Resume:       output/<Company>-<date>/resume.md
 Cover Letter: output/<Company>-<date>/cover-letter.md

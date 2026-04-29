@@ -34,6 +34,18 @@ Generate a project schematic to fill a skill gap:
 /project-mentor Go
 ```
 
+Generate interview prep for a company you've applied to:
+```
+/interview-prep PayNearMe
+/interview-prep PayNearMe-2026-04-27
+```
+
+Scan your target company watchlist for new openings:
+```
+/scan
+```
+Setup: copy `config/target-companies.example.yml` to `config/target-companies.yml` and add your companies.
+
 ---
 
 ## Pre-Flight Gates (checked before every pipeline run)
@@ -49,6 +61,11 @@ Before running any agent, the orchestrator checks:
 
 3. **Role type** — If the role is clearly outside DevOps/SRE/Platform/Infrastructure/Security
    (e.g., frontend, sales, data science): flag and ask before running.
+
+4. **Legitimacy** — After the Job Analyzer runs, the posting is assigned a tier:
+   - `HIGH_CONFIDENCE`: proceed normally
+   - `PROCEED_WITH_CAUTION`: display red flags and continue
+   - `SUSPICIOUS`: display red flags and ask whether to proceed (likely ghost job)
 
 ---
 
@@ -85,6 +102,8 @@ Standalone slash commands (run on demand, not part of the pipeline):
 ```
 /analyze-gaps      — Scans all output/ folders, ranks recurring skill gaps by importance
 /project-mentor    — Generates step-by-step project schematics to fill specific skill gaps
+/interview-prep    — Generates a full interview prep doc for any company you've applied to
+/scan              — Scans target companies for new openings and scores each match
 ```
 
 ---
@@ -119,7 +138,8 @@ career-agent/
 ├── templates/
 │   └── resume-template.md       ← Formatting rules for resume output
 ├── config/
-│   └── google-form.md           ← Form URL + field mappings (gitignored — use .example.md)
+│   ├── google-form.md           ← Form URL + field mappings (gitignored — use .example.md)
+│   └── target-companies.yml     ← Company watchlist for /scan (gitignored — use .example.yml)
 ├── output/                      ← Generated applications (gitignored)
 │   └── <Company>-<YYYY-MM-DD>/
 │       ├── job-analysis.json
@@ -130,6 +150,9 @@ career-agent/
 │       └── ats-report.md
 ├── analysis/                    ← Gap analysis reports (gitignored)
 │   └── gap-analysis-<date>.md
+├── scans/                       ← Scan results per run (gitignored)
+│   └── scan-<YYYY-MM-DD>/
+│       └── report.md
 └── projects/                    ← Project schematics (gitignored)
     └── <project-name>.md
 ```
@@ -161,6 +184,8 @@ career-agent/
 | Form Filler | Every pipeline | Output folder + job URL | Google Form submission |
 | Gap Analyzer | `/analyze-gaps` | All output/ folders | `analysis/gap-analysis-<date>.md` |
 | Project Mentor | `/project-mentor` | Latest gap analysis | `projects/<name>.md` schematic |
+| Interview Prep | `/interview-prep` | output/<Company>/ folder | `output/<Company>/interview-prep.md` |
+| Scanner | `/scan` | config/target-companies.yml + data/skills.md | `analysis/scan-<date>.md` |
 
 ---
 

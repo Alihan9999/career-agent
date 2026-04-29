@@ -18,12 +18,20 @@ output/*/
 config/google-form.md
 !config/google-form.example.md
 
+# Target companies watchlist (reveals job search strategy — keep private)
+config/target-companies.yml
+!config/target-companies.example.yml
+
 # Environment variables (Google Form IDs, any future API keys)
 .env
 .env.local
 
 # Gap analysis reports (reveals job search targets — keep private)
 analysis/
+
+# Scan results (reveals job search targets and company watchlist — keep private)
+scans/*/
+!scans/.gitkeep
 
 # Project schematics (reveals skill gaps and job search strategy — keep private)
 projects/

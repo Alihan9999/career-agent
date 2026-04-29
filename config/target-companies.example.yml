@@ -1,0 +1,111 @@
+# Target Companies Watchlist
+# Copy this file to config/target-companies.yml and fill in your list.
+# target-companies.yml is gitignored — it reveals your job search strategy.
+#
+# Supported ATS platforms (use the ats + ats_id fields for direct API access):
+#   greenhouse  — https://boards-api.greenhouse.io/v1/boards/{ats_id}/jobs
+#   lever       — https://api.lever.co/v0/postings/{ats_id}?mode=json
+#   ashby       — https://jobs.ashbyhq.com/{ats_id} (scraped via WebFetch)
+#   workable    — https://apply.workable.com/{ats_id} (scraped via WebFetch)
+#   custom      — falls back to WebSearch using the careers_url
+
+companies:
+
+  # --- Tier 1: Dream targets (apply immediately if match found) ---
+  - name: Stripe
+    careers_url: https://stripe.com/jobs
+    ats: greenhouse
+    ats_id: stripe
+    tier: 1
+
+  - name: Cloudflare
+    careers_url: https://www.cloudflare.com/careers/jobs/
+    ats: greenhouse
+    ats_id: cloudflare
+    tier: 1
+
+  - name: HashiCorp
+    careers_url: https://www.hashicorp.com/jobs
+    ats: greenhouse
+    ats_id: hashicorp
+    tier: 1
+
+  - name: Datadog
+    careers_url: https://www.datadoghq.com/careers/
+    ats: greenhouse
+    ats_id: datadog
+    tier: 1
+
+  # --- Tier 2: Strong interest ---
+  - name: PagerDuty
+    careers_url: https://www.pagerduty.com/careers/
+    ats: greenhouse
+    ats_id: pagerduty
+    tier: 2
+
+  - name: Grafana Labs
+    careers_url: https://grafana.com/about/careers/
+    ats: greenhouse
+    ats_id: grafanalabs
+    tier: 2
+
+  - name: Wiz
+    careers_url: https://www.wiz.io/careers
+    ats: greenhouse
+    ats_id: wizsecurity
+    tier: 2
+
+  - name: Tailscale
+    careers_url: https://tailscale.com/careers
+    ats: ashby
+    ats_id: tailscale
+    tier: 2
+
+  # --- Tier 3: Watch but lower priority ---
+  - name: Fastly
+    careers_url: https://www.fastly.com/about/careers
+    ats: greenhouse
+    ats_id: fastly
+    tier: 3
+
+  - name: Fly.io
+    careers_url: https://fly.io/jobs
+    ats: custom
+    tier: 3
+
+# Role filters — applied across all companies
+filters:
+  # Jobs must contain at least one include keyword (case-insensitive)
+  include_keywords:
+    - DevOps
+    - SRE
+    - Site Reliability
+    - Platform Engineer
+    - Infrastructure Engineer
+    - Cloud Engineer
+    - Production Engineer
+    - Reliability Engineer
+
+  # Jobs are skipped if they contain any exclude keyword
+  exclude_keywords:
+    - Staff
+    - Principal
+    - Director
+    - Manager
+    - VP
+    - Data Scientist
+    - Data Engineer
+    - Frontend
+    - Backend Engineer
+    - Full Stack
+    - Mobile
+    - Sales
+    - Marketing
+    - Recruiter
+
+  # Minimum confidence score to include in report (0-100)
+  min_score: 60
+
+  # Location requirements — roles not matching are excluded entirely before scoring
+  remote_only: true      # skip any role that is not explicitly remote or has a required office location
+  location: US           # skip roles located outside the US (EU, APAC, etc.) or with no US remote option
