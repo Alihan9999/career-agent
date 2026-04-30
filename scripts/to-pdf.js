@@ -78,13 +78,47 @@ const coverLetterCss = `
     font-family: Arial, Helvetica, sans-serif;
     font-size: 11pt;
     line-height: 1.65;
-    color: #000;
-    padding: 0.9in 0.85in;
+    color: #1a1a1a;
+    padding: 0 0.85in 0.85in;
     width: ${LETTER_WIDTH_PX}px;
+    background: #fff;
   }
-  p { margin-bottom: 14px; }
-  hr { border: none; border-top: 1px solid #ccc; margin: 18px 0; }
-  h1, h2, h3 { font-size: 11pt; font-weight: 600; margin-bottom: 4px; }
+
+  /* Full-bleed dark navy name header */
+  h1 {
+    background: #1B2A4A;
+    color: #fff;
+    font-size: 23pt;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    padding: 0.42in 0.85in 0.13in;
+    margin: 0 -0.85in;
+  }
+
+  /* Contact info row — still inside navy header, red accent underline */
+  h1 + p {
+    background: #1B2A4A;
+    color: #9FBAD9;
+    font-size: 9.5pt;
+    letter-spacing: 0.4px;
+    padding: 0.07in 0.85in 0.28in;
+    margin: 0 -0.85in 0;
+    border-bottom: 4px solid #C0392B;
+  }
+  h1 + p a { color: #9FBAD9; }
+
+  /* Date paragraph — first element after header accent */
+  h1 + p + p {
+    margin-top: 0.38in;
+    font-size: 10.5pt;
+    color: #555;
+    margin-bottom: 16px;
+  }
+
+  p { margin-bottom: 13px; }
+  a { color: #1B2A4A; text-decoration: none; }
+  hr { display: none; }
 `;
 
 const spacingSteps = [

@@ -47,13 +47,21 @@ You write cover letters that sound human, specific, and genuinely enthusiastic â
 
 ## Header Format
 ```
-[Applicant Name]
+# [Full Name]
 [Email] | [Phone] | [LinkedIn]
 
 [Date]
 
 Hiring Team, [Company Name]
 Re: [Exact Job Title]
+```
+
+## Closing
+End every letter with:
+```
+Sincerely,
+
+[Full Name]
 ```
 
 ## Output
