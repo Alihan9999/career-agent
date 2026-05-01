@@ -221,38 +221,21 @@ const spacingSteps = [
 
   await browser.close();
 
-  // Print markdown run report
-  const reportDir  = require('path').dirname(outputFile);
+  // Print compact run summary
+  const reportDir    = require('path').dirname(outputFile);
   const atsReportPath = require('path').join(reportDir, 'ats-report.md');
-  const atsContent    = fs.existsSync(atsReportPath) ? fs.readFileSync(atsReportPath, 'utf8') : null;
-  const date          = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  const folderName    = require('path').basename(reportDir);
+  const folderName   = require('path').basename(reportDir);
 
-  const report = [
-    `---`,
-    `## Resume Generation Report`,
-    `**Date:** ${date}`,
-    `**Output folder:** \`output/${folderName}/\``,
-    ``,
-    `### PDF`,
-    `| File | Status |`,
-    `|---|---|`,
-    `| \`resume.pdf\` | ✓ Saved |`,
-    `| \`cover-letter.pdf\` | ${fs.existsSync(require('path').join(reportDir, 'cover-letter.pdf')) ? '✓ Saved' : '—'} |`,
-    ``,
-    isCoverLetter ? '' : [
-      `### Layout`,
-      `| Setting | Value |`,
-      `|---|---|`,
-      `| Pages | 1 ✓ |`,
-      `| Padding | ${chosenStep ? chosenStep.padding + 'in' : 'min'} |`,
-      `| Line height | ${chosenStep ? chosenStep.lineHeight : 'min'} |`,
-      `| Content height | ${finalHeight}px / ${LETTER_HEIGHT_PX}px limit |`,
-    ].join('\n'),
-    ``,
-    atsContent ? atsContent : `_No ATS report found in output folder._`,
-    `---`,
-  ].join('\n');
+  let atsScore = '';
+  if (!isCoverLetter && fs.existsSync(atsReportPath)) {
+    const firstLines = fs.readFileSync(atsReportPath, 'utf8').split('\n').slice(0, 8).join('\n');
+    const m = firstLines.match(/ATS Score:\s*(\d+%)/);
+    if (m) atsScore = ` | ATS: ${m[1]}`;
+  }
 
-  console.log('\n' + report);
+  const layoutNote = (!isCoverLetter && chosenStep)
+    ? ` | ${chosenStep.padding}in padding, ${finalHeight}px`
+    : '';
+
+  console.log(`\n✓ Done: output/${folderName}/${isCoverLetter ? 'cover-letter' : 'resume'}.pdf${layoutNote}${atsScore}`);
 })();
