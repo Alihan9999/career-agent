@@ -92,10 +92,13 @@ Job URL
            [5] ATS Optimizer    — Reviews both docs, scores keyword match, writes ats-report.md
                  │
                  ▼
-           [6] Output Packager  — Saves all files to /output/<company>-<date>/
+           [6] Humanizer        — Breaks AI-detection signatures (perplexity/burstiness), preserves keywords
                  │
                  ▼
-           [7] Form Filler      — Submits Google tracking form
+           [7] Output Packager  — Saves all files to /output/<company>-<date>/
+                 │
+                 ▼
+           [8] Form Filler      — Submits Google tracking form
 ```
 
 Standalone slash commands (run on demand, not part of the pipeline):
@@ -126,6 +129,7 @@ career-agent/
 │   ├── resume-customizer.md
 │   ├── cover-letter-writer.md
 │   ├── ats-optimizer.md
+│   ├── humanizer.md             ← Breaks AI-detection signatures, preserves ATS keywords
 │   ├── form-filler.md
 │   ├── gap-analyzer.md          ← Backing agent for /analyze-gaps
 │   └── project-mentor.md        ← Backing agent for /project-mentor
@@ -134,7 +138,8 @@ career-agent/
 │       ├── analyze-gaps.md      ← /analyze-gaps slash command
 │       └── project-mentor.md   ← /project-mentor slash command
 ├── scripts/
-│   └── gap-analysis.py          ← Run by gap-analyzer agent
+│   ├── gap-analysis.py          ← Run by gap-analyzer agent
+│   └── humanize-metrics.py      ← Run by humanizer agent (burstiness/cliche/dash check)
 ├── templates/
 │   └── resume-template.md       ← Formatting rules for resume output
 ├── config/
@@ -147,7 +152,8 @@ career-agent/
 │       ├── resume.md
 │       ├── resume.pdf
 │       ├── cover-letter.md
-│       └── ats-report.md
+│       ├── ats-report.md
+│       └── humanizer-report.md
 ├── analysis/                    ← Gap analysis reports (gitignored)
 │   └── gap-analysis-<date>.md
 ├── scans/                       ← Scan results per run (gitignored)
@@ -180,6 +186,7 @@ career-agent/
 | Resume Customizer | Every pipeline | job-analysis + data/ | `resume.md` |
 | Cover Letter Writer | Every pipeline | job-analysis + company-research + data/ | `cover-letter.md` |
 | ATS Optimizer | Every pipeline | resume.md + cover-letter.md + job-analysis | Revised docs + `ats-report.md` |
+| Humanizer | Every pipeline | resume.md + cover-letter.md + ats-report.md | Rewritten docs + `humanizer-report.md` |
 | Output Packager | Every pipeline | All outputs | `/output/<Company>-<date>/` folder |
 | Form Filler | Every pipeline | Output folder + job URL | Google Form submission |
 | Gap Analyzer | `/analyze-gaps` | All output/ folders | `analysis/gap-analysis-<date>.md` |

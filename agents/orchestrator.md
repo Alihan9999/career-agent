@@ -60,6 +60,9 @@ After the Job Analyzer runs, read `legitimacy.tier` from job-analysis.json:
 ### Phase 3 — Quality (after Phase 2)
 - Spawn **ATS Optimizer** with: resume.md + cover-letter.md + job-analysis.json
 - If ATS score < 80%: send back to Resume Customizer with the specific missing keywords listed
+- Spawn **Humanizer** with: resume.md + cover-letter.md + ats-report.md
+  Runs `scripts/humanize-metrics.py` after rewrites; loops up to 3 times.
+  Must preserve every keyword from `## Keywords: PRESENT` and `## Keywords: ADDED`.
 
 ### Phase 4 — Delivery
 - Spawn **Output Packager** — saves all files to `output/<CompanyName>-<YYYY-MM-DD>/`
