@@ -40,6 +40,15 @@ Generate interview prep for a company you've applied to:
 /interview-prep PayNearMe-2026-04-27
 ```
 
+Bulk-apply to a list of URLs in one go:
+```
+/bulk-apply <url1> <url2> ...           # paste URLs inline
+/bulk-apply inputs/jobs.txt             # read URLs from a file
+/bulk-apply inputs/jobs.txt --yolo      # skip the confirmation step
+```
+Default mode analyzes + scores each URL, shows a table, asks which to pipeline.
+`--yolo` runs the full pipeline on every URL with score >= 60 and gate == PROCEED.
+
 Scan your target company watchlist for new openings:
 ```
 /scan              # Tier 1 only (default — keeps tokens low)
@@ -110,6 +119,7 @@ Standalone slash commands (run on demand, not part of the pipeline):
 /project-mentor    — Generates step-by-step project schematics to fill specific skill gaps
 /interview-prep    — Generates a full interview prep doc for any company you've applied to
 /scan              — Scans target companies for new openings and scores each match
+/bulk-apply        — Runs the application pipeline on a list of URLs (file or inline)
 ```
 
 ---
@@ -141,6 +151,7 @@ career-agent/
 ├── .claude/
 │   └── commands/
 │       ├── analyze-gaps.md      ← /analyze-gaps slash command
+│       ├── bulk-apply.md        ← /bulk-apply slash command
 │       └── project-mentor.md   ← /project-mentor slash command
 ├── scripts/
 │   ├── gap-analysis.py          ← Run by gap-analyzer agent
@@ -169,6 +180,8 @@ career-agent/
 ├── scans/                       ← Scan results per run (gitignored)
 │   └── scan-<YYYY-MM-DD>/
 │       └── report.md
+├── inputs/                      ← URL lists for /bulk-apply (gitignored)
+│   └── jobs.txt                 ← one URL per line, # for comments
 └── projects/                    ← Project schematics (gitignored)
     └── <project-name>.md
 ```

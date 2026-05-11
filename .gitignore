@@ -44,6 +44,11 @@ scans/*/
 # Project schematics (reveals skill gaps and job search strategy — keep private)
 projects/
 
+# URL input lists for /bulk-apply (reveals job search strategy — keep private)
+inputs/*
+!inputs/.gitkeep
+!inputs/README.md
+
 # PDF artifacts
 *.pdf
 
