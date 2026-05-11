@@ -1,5 +1,13 @@
 # Dependencies
 node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Scrapling dev-mode cache (created by Fetcher with development=True)
+.scrapling-cache/
+.scrapling/
 
 # Your personal data (real resume content, contact info — never commit)
 data/*.md

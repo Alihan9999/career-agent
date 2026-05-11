@@ -42,9 +42,12 @@ Generate interview prep for a company you've applied to:
 
 Scan your target company watchlist for new openings:
 ```
-/scan
+/scan              # Tier 1 only (default — keeps tokens low)
+/scan tier 2       # Tiers 1 + 2
+/scan all          # Full watchlist
+/scan Stripe       # One company by name
 ```
-Setup: copy `config/target-companies.example.yml` to `config/target-companies.yml` and add your companies.
+Setup: copy `config/target-companies.example.yml` to `config/target-companies.yml` and add your companies. Each entry must have a `tier: 1|2|3`.
 
 ---
 
@@ -129,6 +132,8 @@ career-agent/
 │   ├── resume-customizer.md
 │   ├── cover-letter-writer.md
 │   ├── ats-optimizer.md
+│   ├── ats-profiles/            ← Per-ATS rules (greenhouse, workday, lever,
+│   │                              icims, taleo, generic). Read by ATS Optimizer.
 │   ├── humanizer.md             ← Breaks AI-detection signatures, preserves ATS keywords
 │   ├── form-filler.md
 │   ├── gap-analyzer.md          ← Backing agent for /analyze-gaps
@@ -139,7 +144,12 @@ career-agent/
 │       └── project-mentor.md   ← /project-mentor slash command
 ├── scripts/
 │   ├── gap-analysis.py          ← Run by gap-analyzer agent
-│   └── humanize-metrics.py      ← Run by humanizer agent (burstiness/cliche/dash check)
+│   ├── humanize-metrics.py      ← Run by humanizer agent (burstiness/cliche/dash check)
+│   ├── scrape.py                ← Unified scraping CLI (fetch + board subcommands)
+│   ├── to-pdf.js                ← Markdown -> PDF (default output)
+│   ├── to-docx.js               ← Markdown -> DOCX (Workday/Taleo profile prefers DOCX)
+│   └── spiders/                 ← Per-board scrapers (greenhouse, lever, ashby, workable,
+│                                   workday, linkedin, indeed, wellfound, builtin, custom)
 ├── templates/
 │   └── resume-template.md       ← Formatting rules for resume output
 ├── config/
@@ -167,13 +177,41 @@ career-agent/
 
 ## Setup Checklist
 
+### Personal data
 - [ ] Fill in `data/personal-info.md` with your contact details
 - [ ] Fill in `data/base-resume.md` with your full work history
 - [ ] Fill in `data/experience.md` with detailed bullets for each role
 - [ ] Fill in `data/projects.md` with all projects + descriptions
 - [ ] Fill in `data/skills.md` with all your skills
-- [ ] Copy `config/google-form.example.md` to `config/google-form.md` and fill in your form URL + field IDs
-- [ ] Install Node.js + Puppeteer for PDF generation (`npm install` in project root)
+
+### Configuration
+- [ ] Copy `config/google-form.example.md` → `config/google-form.md` and fill in your form URL + field IDs
+- [ ] Copy `config/target-companies.example.yml` → `config/target-companies.yml` and fill in your watchlist. Tag each company with `tier: 1|2|3`. `/scan` defaults to Tier 1 only — raise `scan_tier_limit` in the file (or pass `/scan tier 2`, `/scan all`, etc.) when you want a wider sweep.
+
+### Node.js (PDF + DOCX generation)
+Requires Node ≥18.
+```
+npm install
+```
+Installs: `puppeteer` (PDF rendering), `html-to-docx` (Workday/Taleo profiles produce DOCX), `marked`, `@anthropic-ai/sdk`, `express`, `dotenv`.
+
+### Python (scraping + metrics scripts)
+Requires Python ≥3.10.
+```
+pip install -r requirements.txt
+scrapling install     # one-time: fetches Chromium browser binaries
+```
+Installs: `scrapling[ai,fetchers]` (stealth scraping + Cloudflare bypass + MCP server), `PyYAML` (watchlist parser).
+
+> Greenhouse and Lever spiders use stdlib `urllib` only and work without Scrapling, so you can defer the install if you only watch those boards.
+
+### Claude Code MCP server
+`.mcp.json` in the repo root registers Scrapling's MCP server at project scope. When you open the project in Claude Code, it starts automatically — confirm with `/mcp` and look for `scrapling`. No manual registration needed.
+
+### Token budget tips
+- `/scan` defaults to Tier 1 only. Use `/scan tier 2` or `/scan all` when you actively want a broader pass.
+- The full application pipeline (resume + cover letter + ATS optimizer + humanizer) is the most expensive operation per run. Use `/scan` to surface STRONG matches first, then approve only the ones worth a full pipeline run.
+- The Scrapling JSON-API spiders (greenhouse, lever, builtin) cost almost nothing — they're plain HTTP. The browser-based spiders (ashby, wellfound, workday, linkedin, indeed) are heavier; prefer the JSON-API boards in your watchlist where possible.
 
 ---
 
@@ -185,7 +223,7 @@ career-agent/
 | Company Researcher | Every pipeline | Company name + URL | `company-research.json` |
 | Resume Customizer | Every pipeline | job-analysis + data/ | `resume.md` |
 | Cover Letter Writer | Every pipeline | job-analysis + company-research + data/ | `cover-letter.md` |
-| ATS Optimizer | Every pipeline | resume.md + cover-letter.md + job-analysis | Revised docs + `ats-report.md` |
+| ATS Optimizer | Every pipeline | resume.md + cover-letter.md + job-analysis + `ats-profiles/<name>.md` | Revised docs (with profile-correct section order + acronym expansion) + `ats-report.md` |
 | Humanizer | Every pipeline | resume.md + cover-letter.md + ats-report.md | Rewritten docs + `humanizer-report.md` |
 | Output Packager | Every pipeline | All outputs | `/output/<Company>-<date>/` folder |
 | Form Filler | Every pipeline | Output folder + job URL | Google Form submission |

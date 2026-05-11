@@ -66,12 +66,18 @@ After the Job Analyzer runs, read `legitimacy.tier` from job-analysis.json:
 
 ### Phase 4 — Delivery
 - Spawn **Output Packager** — saves all files to `output/<CompanyName>-<YYYY-MM-DD>/`
-  then run PDF generation for BOTH files separately:
+  then run document generation. Read the `## ATS Profile Used` line in
+  `ats-report.md` — the preferred format (pdf or docx) is in parentheses.
+  - If `pdf`: run `node scripts/to-pdf.js` for resume and cover letter.
+  - If `docx`: run `node scripts/to-docx.js` for the resume (Workday/Taleo
+    parse DOCX more reliably); the cover letter still goes through `to-pdf.js`
+    because it's read by a human recruiter.
   ```
-  node scripts/to-pdf.js output/<Company>-<date>/resume.md
-  node scripts/to-pdf.js output/<Company>-<date>/cover-letter.md
+  node scripts/to-pdf.js  output/<Company>-<date>/resume.md     # or to-docx.js
+  node scripts/to-pdf.js  output/<Company>-<date>/cover-letter.md
   ```
-  The script detects resume vs cover letter by filename — each must be run independently.
+  Each file is processed independently (the PDF script detects resume vs
+  cover letter by filename).
 - Spawn **Form Filler** with the output folder path + job URL + company name
 
 ---
