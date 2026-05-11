@@ -29,35 +29,58 @@ argument).
 - Read `config/target-companies.yml` (if it does not exist, tell the user to copy `config/target-companies.example.yml` and fill it in)
 - Read `data/skills.md` — the candidate's full skill inventory used for scoring
 - Read `output/` folder names to build an already-applied list (skip companies/roles already applied to)
-- **Filter the watchlist by tier per the argument-parsing table above before doing anything else.** Print a one-line note: `Scanning N companies (tier <=K)`. This is the budget gate — every dropped company is one less spider call.
+- **Filter the watchlist by tier per the argument-parsing table above before doing anything else.** Print a one-line note: `Scanning N companies (tier <=K)`.
+- **Then print the full numbered list** of company names you intend to scan (`1. Anthropic, 2. OpenAI, ...`). This is mandatory — it lets the user verify nothing was silently dropped, and it forces you to iterate the actual count.
+- Cross-check N against the printed list before moving on. If they differ, fix the filter and reprint.
 
 ### Step 2 — Fetch job listings per company
 
-For each company, call the unified scraper:
+For each company in the printed list, run **one** Bash invocation per company.
+Use the matching command form for the ATS:
 
 ```
+# greenhouse / lever / ashby / workable / workday / linkedin / indeed / wellfound / builtin
 python3 scripts/scrape.py board <ats> <ats_id> --json
+
+# custom (FAANG, fly.io, careers.snowflake.com, anything not on a known board)
+python3 scripts/scrape.py board custom --url <careers_url> --json
 ```
 
-Supported `<ats>` values: `greenhouse`, `lever`, `ashby`, `workable`, `workday`,
-`linkedin`, `indeed`, `wellfound`, `builtin`, `custom`. Each spider knows the
-right URL pattern and rendering strategy:
+#### Strict shell rules (the user's first run blew up on these)
+- **Bash only.** Never use PowerShell syntax: no `$variable`, no `2>$null`. The
+  Bash equivalents are `2>/dev/null`, `"$VAR"`, etc. The Bash tool runs Bash
+  even on Windows hosts — do not assume PowerShell.
+- **Never inline Python via heredoc** (`python3 - <<'PY' ... PY`) inside a Bash
+  call. Embedded `[`/`]` list literals and `\n` escapes get mangled. If you need
+  to filter or transform results, do it in your own reasoning from the JSON
+  the spider returns, or write a one-line `jq` filter.
+- **One spider call per company per Bash invocation.** No loops, no semicolons
+  chaining multiple companies. This keeps timeouts isolated and makes failures
+  attributable.
+- **On Windows hosts**, if `python3` isn't on PATH, the user can substitute
+  `py -3.14`. The agent should try `python3 scripts/scrape.py …` first; if it
+  reports "command not found" or `ModuleNotFoundError: No module named
+  'scrapling'`, ask the user to verify their Python environment instead of
+  retrying — pip-install issues need user input.
 
+#### Spider routing
 - **greenhouse / lever / builtin** — public JSON or server-rendered HTML, no auth.
 - **ashby / wellfound** — JS-rendered, uses Playwright via Scrapling's DynamicFetcher.
 - **workable** — JSON endpoint first, stealth HTML fallback.
 - **workday** — POST to the tenant's `wday/cxs` JSON endpoint with stealth.
 - **linkedin / indeed** — Cloudflare-aware StealthyFetcher with Chrome impersonation.
-- **custom** — pass `--url <careers_url>`. Auto-escalates from plain HTTP to
-  DynamicFetcher to StealthyFetcher as needed.
+- **custom** — auto-escalates from plain HTTP to DynamicFetcher to
+  StealthyFetcher. **Heads-up:** for known SPA hosts (FAANG careers pages,
+  fly.io) the spider goes straight to Playwright and returns every linkable
+  job on the page, often hundreds. Apply the include/exclude filters
+  aggressively in Step 3 — server-side URL filters on those sites are
+  client-side only and do not narrow the spider's input.
 
 Each spider returns a JSON array of `{title, url, location, department, posted, source}`
 records. Parse the JSON and feed it into Step 3.
 
-If `scripts/scrape.py` is unavailable (e.g. Scrapling not yet installed), fall back
-to plain WebFetch on the careers URL and note the degraded mode in the report.
-
-If a company's career page is inaccessible, note it and continue — do not block the scan.
+If a company's career page is inaccessible, note it (HTTP code or error message)
+and continue — do not block the scan.
 
 ### Step 3 — Filter results
 

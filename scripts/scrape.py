@@ -101,8 +101,14 @@ def cmd_board(args) -> int:
     spider = REGISTRY[ats]
     try:
         if ats == "custom":
+            if not args.url:
+                print("custom: pass --url <careers_url>", file=sys.stderr)
+                return 2
             jobs = spider.list_jobs(args.ats_id, url=args.url)
         else:
+            if not args.ats_id:
+                print(f"{ats}: ats_id required (board slug or query string)", file=sys.stderr)
+                return 2
             jobs = spider.list_jobs(args.ats_id)
     except SystemExit as e:
         print(str(e), file=sys.stderr)
@@ -152,7 +158,7 @@ def main():
 
     b = sub.add_parser("board", help="List jobs from a known board")
     b.add_argument("ats", help="ATS name (greenhouse, lever, ashby, workable, workday, linkedin, indeed, wellfound, builtin, custom)")
-    b.add_argument("ats_id", help="Board ID, slug, or query string for the board")
+    b.add_argument("ats_id", nargs="?", default="", help="Board ID, slug, or query string (omit for ats=custom; pass --url instead)")
     b.add_argument("--url", default="", help="Required when ats=custom")
     b.add_argument("--json", action="store_true", help="Emit JSON instead of TSV")
     b.set_defaults(func=cmd_board)
