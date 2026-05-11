@@ -30,8 +30,20 @@ def list_jobs(ats_id: str) -> list[dict]:
     page = StealthyFetcher.fetch(
         endpoint,
         method="POST",
-        headers={"Content-Type": "application/json", "Accept": "application/json"},
-        json_body={"limit": 50, "offset": 0, "searchText": ""},
+        headers={
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Referer": base + "/",
+        },
+        json_body={
+            # Workday's CXS jobs endpoint requires all four fields, including
+            # an empty appliedFacets object. Sending only limit/offset/searchText
+            # returns HTTP 400 on most tenants (e.g. NVIDIA).
+            "appliedFacets": {},
+            "limit": 50,
+            "offset": 0,
+            "searchText": "",
+        },
         headless=True,
     )
     try:
