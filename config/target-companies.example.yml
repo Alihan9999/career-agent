@@ -2,12 +2,22 @@
 # Copy this file to config/target-companies.yml and fill in your list.
 # target-companies.yml is gitignored — it reveals your job search strategy.
 #
-# Supported ATS platforms (use the ats + ats_id fields for direct API access):
-#   greenhouse  — https://boards-api.greenhouse.io/v1/boards/{ats_id}/jobs
-#   lever       — https://api.lever.co/v0/postings/{ats_id}?mode=json
-#   ashby       — https://jobs.ashbyhq.com/{ats_id} (scraped via WebFetch)
-#   workable    — https://apply.workable.com/{ats_id} (scraped via WebFetch)
-#   custom      — falls back to WebSearch using the careers_url
+# Supported ATS platforms (used by `scripts/scrape.py board <ats> <ats_id>`):
+#   greenhouse  — JSON API. ats_id is the board slug (e.g. "stripe").
+#   lever       — JSON API. ats_id is the company slug.
+#   ashby       — JS-rendered. ats_id is the company slug from jobs.ashbyhq.com/<slug>.
+#   workable    — JSON + stealth fallback. ats_id is the account slug.
+#   workday     — Stealth POST to the tenant's cxs endpoint.
+#                 ats_id MUST be the full tenant URL up to the site slug, e.g.
+#                 https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite
+#   builtin     — Server-rendered. ats_id is the company slug from builtin.com/company/<slug>.
+#   wellfound   — JS-rendered. ats_id is the company slug from wellfound.com/company/<slug>.
+#   linkedin    — Cloudflare-aware stealth. ats_id is a search query string,
+#                 e.g. "keywords=Platform+Engineer&location=United+States&f_TPR=r604800".
+#   indeed      — Cloudflare-aware stealth. ats_id is a search query string,
+#                 e.g. "q=Platform+Engineer&l=remote&fromage=7".
+#   custom      — Auto-escalating fetcher against careers_url. Pass careers_url
+#                 directly (no ats_id needed) and the spider will discover job links.
 
 companies:
 
@@ -72,6 +82,25 @@ companies:
     careers_url: https://fly.io/jobs
     ats: custom
     tier: 3
+
+  # --- Examples of the newer board types (uncomment and customize) ---
+  # - name: Nvidia
+  #   careers_url: https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite
+  #   ats: workday
+  #   ats_id: https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite
+  #   tier: 2
+  #
+  # - name: LinkedIn (search-as-a-source, not a single company)
+  #   careers_url: https://www.linkedin.com/jobs/search
+  #   ats: linkedin
+  #   ats_id: "keywords=Platform+Engineer&location=United+States&f_TPR=r604800"
+  #   tier: 3
+  #
+  # - name: Indeed (search-as-a-source)
+  #   careers_url: https://www.indeed.com/jobs
+  #   ats: indeed
+  #   ats_id: "q=Platform+Engineer&l=remote&fromage=7"
+  #   tier: 3
 
 # Role filters — applied across all companies
 filters:

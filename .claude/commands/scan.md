@@ -15,28 +15,29 @@ candidate has not yet applied to.
 
 ### Step 2 — Fetch job listings per company
 
-For each company in the watchlist, use the following strategy in order:
+For each company, call the unified scraper:
 
-**Greenhouse ATS** (`ats: greenhouse`):
-Fetch: `https://boards-api.greenhouse.io/v1/boards/{ats_id}/jobs`
-Parse the `jobs` array. Each job has `title`, `absolute_url`, `location`.
+```
+python3 scripts/scrape.py board <ats> <ats_id> --json
+```
 
-**Lever ATS** (`ats: lever`):
-Fetch: `https://api.lever.co/v0/postings/{ats_id}?mode=json`
-Parse the JSON array. Each posting has `text` (title), `hostedUrl`, `categories.location`.
+Supported `<ats>` values: `greenhouse`, `lever`, `ashby`, `workable`, `workday`,
+`linkedin`, `indeed`, `wellfound`, `builtin`, `custom`. Each spider knows the
+right URL pattern and rendering strategy:
 
-**Ashby ATS** (`ats: ashby`):
-First try WebFetch on `https://jobs.ashbyhq.com/{ats_id}`.
-If the page returns only a bare "Jobs" heading with no listings (Ashby renders listings via JavaScript), fall back to WebSearch: `{company name} careers site:jobs.ashbyhq.com OR site:ashbyhq.com DevOps OR SRE OR "Platform Engineer" OR "Infrastructure Engineer"`
-Parse job titles and links from the search results.
+- **greenhouse / lever / builtin** — public JSON or server-rendered HTML, no auth.
+- **ashby / wellfound** — JS-rendered, uses Playwright via Scrapling's DynamicFetcher.
+- **workable** — JSON endpoint first, stealth HTML fallback.
+- **workday** — POST to the tenant's `wday/cxs` JSON endpoint with stealth.
+- **linkedin / indeed** — Cloudflare-aware StealthyFetcher with Chrome impersonation.
+- **custom** — pass `--url <careers_url>`. Auto-escalates from plain HTTP to
+  DynamicFetcher to StealthyFetcher as needed.
 
-**Workable** (`ats: workable`):
-Fetch: `https://apply.workable.com/{ats_id}` via WebFetch.
-Parse job listings from the HTML.
+Each spider returns a JSON array of `{title, url, location, department, posted, source}`
+records. Parse the JSON and feed it into Step 3.
 
-**Custom** (`ats: custom`):
-Use WebSearch: `site:{careers_url domain} {include_keywords joined by OR}`
-Take the top 10 results and extract job titles and URLs.
+If `scripts/scrape.py` is unavailable (e.g. Scrapling not yet installed), fall back
+to plain WebFetch on the careers URL and note the degraded mode in the report.
 
 If a company's career page is inaccessible, note it and continue — do not block the scan.
 

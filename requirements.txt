@@ -1,0 +1,5 @@
+# Python deps for the scraping layer.
+# Greenhouse and Lever spiders use stdlib only; everything else needs Scrapling.
+# Run `scrapling install` after pip install to fetch browser binaries.
+scrapling[ai,fetchers]>=0.3
+PyYAML>=6.0

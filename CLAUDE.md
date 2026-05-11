@@ -139,7 +139,10 @@ career-agent/
 │       └── project-mentor.md   ← /project-mentor slash command
 ├── scripts/
 │   ├── gap-analysis.py          ← Run by gap-analyzer agent
-│   └── humanize-metrics.py      ← Run by humanizer agent (burstiness/cliche/dash check)
+│   ├── humanize-metrics.py      ← Run by humanizer agent (burstiness/cliche/dash check)
+│   ├── scrape.py                ← Unified scraping CLI (fetch + board subcommands)
+│   └── spiders/                 ← Per-board scrapers (greenhouse, lever, ashby, workable,
+│                                   workday, linkedin, indeed, wellfound, builtin, custom)
 ├── templates/
 │   └── resume-template.md       ← Formatting rules for resume output
 ├── config/
@@ -174,6 +177,8 @@ career-agent/
 - [ ] Fill in `data/skills.md` with all your skills
 - [ ] Copy `config/google-form.example.md` to `config/google-form.md` and fill in your form URL + field IDs
 - [ ] Install Node.js + Puppeteer for PDF generation (`npm install` in project root)
+- [ ] Install Python ≥3.10 and the scraping deps: `pip install -r requirements.txt && scrapling install` (fetches browser binaries)
+- [ ] The Scrapling MCP server is registered in `.mcp.json` and starts automatically when Claude Code opens the project
 
 ---
 
