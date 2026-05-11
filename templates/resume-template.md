@@ -10,14 +10,38 @@ The Resume Customizer must produce output that exactly follows these rules.
 - Font: single font family, clean sans-serif (for PDF export)
 - Font size: 11pt body, 14pt name, 12pt section headers
 
-## Section Order (in this order, no exceptions)
+## Section Order
+
+Two valid layouts exist. The Resume Customizer produces **Layout A** by default;
+the ATS Optimizer rearranges to **Layout B** if `ats_platform` in
+`job-analysis.json` is `greenhouse` or `workday` (their parsers map Skills first
+to scorecard criteria).
+
+**Layout A — Experience-first (default for Lever, iCIMS, Taleo, Ashby, generic):**
 1. Header (`# Name` + contact line)
 2. `## Professional Experience`
 3. `## Projects` (if space permits and relevant)
 4. `## Technical Skills`
 5. `## Education`
 
+**Layout B — Skills-first (Greenhouse, Workday):**
+1. Header (`# Name` + contact line)
+2. `## Technical Skills`
+3. `## Professional Experience`
+4. `## Projects` (if space permits and relevant)
+5. `## Education`
+
 **No summary section.** Section headers use title case, not ALL CAPS.
+
+## Parser-Safe Constraints (apply to both layouts)
+- Single column only — never two-column (61% of ATS parsers drop the right column entirely)
+- No tables (`| col1 | col2 |`) — render category rows as bold-prefixed paragraphs
+- No text boxes, page headers/footers, or embedded images
+- Standard section names exactly: "Professional Experience", "Technical Skills",
+  "Projects", "Education". Do not rename to creative titles.
+- Plain hyphen (`-`) for bullets — never Unicode bullets (`●`, `◦`, `▪`)
+- Dates: "Mon YYYY" or "Month YYYY" everywhere (Taleo prefers "MM/YYYY"; the
+  ATS Optimizer applies that swap if the profile demands it)
 
 ## Header Format
 ```

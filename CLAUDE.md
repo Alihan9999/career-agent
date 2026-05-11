@@ -129,6 +129,8 @@ career-agent/
 │   ├── resume-customizer.md
 │   ├── cover-letter-writer.md
 │   ├── ats-optimizer.md
+│   ├── ats-profiles/            ← Per-ATS rules (greenhouse, workday, lever,
+│   │                              icims, taleo, generic). Read by ATS Optimizer.
 │   ├── humanizer.md             ← Breaks AI-detection signatures, preserves ATS keywords
 │   ├── form-filler.md
 │   ├── gap-analyzer.md          ← Backing agent for /analyze-gaps
@@ -141,6 +143,8 @@ career-agent/
 │   ├── gap-analysis.py          ← Run by gap-analyzer agent
 │   ├── humanize-metrics.py      ← Run by humanizer agent (burstiness/cliche/dash check)
 │   ├── scrape.py                ← Unified scraping CLI (fetch + board subcommands)
+│   ├── to-pdf.js                ← Markdown -> PDF (default output)
+│   ├── to-docx.js               ← Markdown -> DOCX (Workday/Taleo profile prefers DOCX)
 │   └── spiders/                 ← Per-board scrapers (greenhouse, lever, ashby, workable,
 │                                   workday, linkedin, indeed, wellfound, builtin, custom)
 ├── templates/
@@ -190,7 +194,7 @@ career-agent/
 | Company Researcher | Every pipeline | Company name + URL | `company-research.json` |
 | Resume Customizer | Every pipeline | job-analysis + data/ | `resume.md` |
 | Cover Letter Writer | Every pipeline | job-analysis + company-research + data/ | `cover-letter.md` |
-| ATS Optimizer | Every pipeline | resume.md + cover-letter.md + job-analysis | Revised docs + `ats-report.md` |
+| ATS Optimizer | Every pipeline | resume.md + cover-letter.md + job-analysis + `ats-profiles/<name>.md` | Revised docs (with profile-correct section order + acronym expansion) + `ats-report.md` |
 | Humanizer | Every pipeline | resume.md + cover-letter.md + ats-report.md | Rewritten docs + `humanizer-report.md` |
 | Output Packager | Every pipeline | All outputs | `/output/<Company>-<date>/` folder |
 | Form Filler | Every pipeline | Output folder + job URL | Google Form submission |

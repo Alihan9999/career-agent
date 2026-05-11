@@ -74,9 +74,30 @@ Return a JSON-like structured document saved as `job-analysis.json`:
   
   "values_mentioned": [
     "company value or cultural signal from the posting"
-  ]
+  ],
+
+  "ats_platform": "greenhouse | workday | lever | icims | taleo | ashby | workable | wellfound | builtin | linkedin | indeed | custom | unknown"
 }
 ```
+
+## ATS Platform Detection
+Infer `ats_platform` from the apply URL or page content. Common patterns:
+- `boards.greenhouse.io/<slug>` or `*.greenhouse.io` → `greenhouse`
+- `jobs.lever.co/<slug>` or `*.lever.co` → `lever`
+- `*.myworkdayjobs.com` or `*.wd1.myworkdaysite.com` → `workday`
+- `jobs.ashbyhq.com/<slug>` → `ashby`
+- `apply.workable.com/<slug>` → `workable`
+- `*.icims.com` → `icims`
+- `*.taleo.net` → `taleo`
+- `wellfound.com/company/<slug>` → `wellfound`
+- `builtin.com/job/<id>` or `builtin*.com/job/<id>` → `builtin`
+- `linkedin.com/jobs/view/<id>` → `linkedin`
+- `indeed.com/viewjob` → `indeed`
+- Anything else on the company's own domain → `custom`
+- Cannot determine → `unknown`
+
+Downstream agents (ATS Optimizer, Output Packager) read this field to pick
+the right profile and output format. If unsure, prefer `unknown` over guessing.
 
 ## Experience Gate Rules
 Set `experience_gate` based on these exact rules (the orchestrator reads this field):
