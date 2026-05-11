@@ -58,6 +58,12 @@ Scan your target company watchlist for new openings:
 ```
 Setup: copy `config/target-companies.example.yml` to `config/target-companies.yml` and add your companies. Each entry must have a `tier: 1|2|3`.
 
+`/scan` writes matching URLs to `inputs/scan-<date>.txt` and offers to chain straight into `/bulk-apply --yolo` for STRONG+GOOD matches:
+```
+/scan                                              # find matches
+/bulk-apply inputs/scan-2026-05-11.txt --yolo      # apply to all
+```
+
 ---
 
 ## Pre-Flight Gates (checked before every pipeline run)
