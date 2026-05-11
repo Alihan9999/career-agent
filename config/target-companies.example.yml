@@ -41,6 +41,9 @@ companies:
     ats_id: cloudflare
     tier: 1
 
+  # HashiCorp was acquired by IBM in 2025. Their public Greenhouse board
+  # may still work via the embed fallback in scripts/spiders/greenhouse.py;
+  # if it stops, drop this entry — IBM's careers portal needs auth.
   - name: HashiCorp
     careers_url: https://www.hashicorp.com/jobs
     ats: greenhouse

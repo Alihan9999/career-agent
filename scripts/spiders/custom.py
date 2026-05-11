@@ -33,6 +33,47 @@ KNOWN_SPA_HOSTS = (
     "fly.io",
 )
 
+# Hosts that use infinite scroll — DynamicFetcher with network_idle alone
+# captures only the initial viewport's worth of jobs. We pass a scroll
+# page_action that pages down until the page stops growing.
+INFINITE_SCROLL_HOSTS = (
+    "metacareers.com",
+    "www.metacareers.com",
+    "jobs.netflix.com",
+)
+
+# How many scroll passes to attempt and how long to wait for new content
+# between passes. Capped to keep run time bounded.
+SCROLL_MAX_PASSES = 12
+SCROLL_WAIT_MS = 1200
+
+
+def _scroll_to_bottom(page):
+    """Playwright page_action: scroll until page height stops growing.
+
+    Called by DynamicFetcher with a Playwright Page object. Compatible with
+    Scrapling >=0.3's `page_action` callable contract.
+    """
+    last_height = 0
+    stable_passes = 0
+    for _ in range(SCROLL_MAX_PASSES):
+        try:
+            height = page.evaluate("document.body.scrollHeight")
+        except Exception:
+            break
+        if height == last_height:
+            stable_passes += 1
+            if stable_passes >= 2:
+                break
+        else:
+            stable_passes = 0
+            last_height = height
+        try:
+            page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+        except Exception:
+            break
+        page.wait_for_timeout(SCROLL_WAIT_MS)
+
 
 def list_jobs(ats_id: str = "", url: str = "") -> list[dict]:
     if not url:
@@ -40,15 +81,21 @@ def list_jobs(ats_id: str = "", url: str = "") -> list[dict]:
     Fetcher, StealthyFetcher, DynamicFetcher = import_scrapling()
     host = urlparse(url).netloc.lower()
 
+    page_action = _scroll_to_bottom if host in INFINITE_SCROLL_HOSTS else None
+
     if host in KNOWN_SPA_HOSTS:
         # Skip the cheap fetch — these always need a real browser.
-        page = DynamicFetcher.fetch(url, network_idle=True, headless=True)
+        page = DynamicFetcher.fetch(
+            url, network_idle=True, headless=True, page_action=page_action
+        )
         body = page.html_content
     else:
         page = Fetcher.get(url, impersonate="chrome")
         body = getattr(page, "html_content", "") or getattr(page, "body", "")
         if _is_sparse(body) or _is_app_shell(body) or looks_blocked(body, page.status):
-            page = DynamicFetcher.fetch(url, network_idle=True, headless=True)
+            page = DynamicFetcher.fetch(
+                url, network_idle=True, headless=True, page_action=page_action
+            )
             body = page.html_content
 
     if looks_blocked(body, page.status):
