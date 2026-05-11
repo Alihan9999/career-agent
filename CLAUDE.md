@@ -205,6 +205,8 @@ Installs: `scrapling[ai,fetchers]` (stealth scraping + Cloudflare bypass + MCP s
 
 > Greenhouse and Lever spiders use stdlib `urllib` only and work without Scrapling, so you can defer the install if you only watch those boards.
 
+> **Windows note:** if `python3` isn't on PATH, install with `py -3.14 -m pip install -r requirements.txt` and run scripts with `py -3.14 scripts/scrape.py ...`. Make sure the `pip install` and the script invocation use the **same** Python — using one Python to install and a different one to run is the most common cause of `ModuleNotFoundError: No module named 'scrapling'`.
+
 ### Claude Code MCP server
 `.mcp.json` in the repo root registers Scrapling's MCP server at project scope. When you open the project in Claude Code, it starts automatically — confirm with `/mcp` and look for `scrapling`. No manual registration needed.
 
