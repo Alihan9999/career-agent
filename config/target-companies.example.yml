@@ -1,150 +1,215 @@
-# Target Companies Watchlist
-# Copy this file to config/target-companies.yml and fill in your list.
+# Target Companies Watchlist — Example
+#
+# Copy this file to config/target-companies.yml and customize.
 # target-companies.yml is gitignored — it reveals your job search strategy.
 #
 # /scan token budget:
 #   By default `/scan` only checks Tier 1 companies to keep token usage low.
 #   Override per invocation: `/scan tier 2`, `/scan 3`, `/scan all`, or `/scan <Company>`.
 #   To raise the default for every run, set scan_tier_limit below.
-#
-scan_tier_limit: 1   # default tiers to scan: 1 (top only), 2 (top+mid), 3 (everything)
-#
+
+scan_tier_limit: 1
+
 # Supported ATS platforms (used by `scripts/scrape.py board <ats> <ats_id>`):
-#   greenhouse  — JSON API. ats_id is the board slug (e.g. "stripe").
+#   greenhouse  — JSON API + embed-HTML fallback. ats_id is the board slug.
 #   lever       — JSON API. ats_id is the company slug.
 #   ashby       — JS-rendered. ats_id is the company slug from jobs.ashbyhq.com/<slug>.
 #   workable    — JSON + stealth fallback. ats_id is the account slug.
-#   workday     — Stealth POST to the tenant's cxs endpoint.
+#   workday     — POST to the tenant's cxs endpoint with Chrome impersonation.
 #                 ats_id MUST be the full tenant URL up to the site slug, e.g.
 #                 https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite
-#   builtin     — Server-rendered. ats_id is the company slug from builtin.com/company/<slug>.
-#   wellfound   — JS-rendered. ats_id is the company slug from wellfound.com/company/<slug>.
-#   linkedin    — Cloudflare-aware stealth. ats_id is a search query string,
-#                 e.g. "keywords=Platform+Engineer&location=United+States&f_TPR=r604800".
-#   indeed      — Cloudflare-aware stealth. ats_id is a search query string,
-#                 e.g. "q=Platform+Engineer&l=remote&fromage=7".
-#   custom      — Auto-escalating fetcher against careers_url. Pass careers_url
-#                 directly (no ats_id needed) and the spider will discover job links.
+#   builtin     — Server-rendered. ats_id is the company slug.
+#   wellfound   — JS-rendered. ats_id is the company slug.
+#   linkedin    — Cloudflare-aware stealth. ats_id is a search query string.
+#   indeed      — Cloudflare-aware stealth. ats_id is a search query string.
+#   custom      — Auto-escalating fetcher against careers_url. The spider
+#                 walks the page for job links; pass careers_url only.
+#
+# Reliability note:
+#   The companies below are the ones that work reliably through /scan.
+#   Companies with custom SPA careers sites (FAANG except Netflix, Meta) or
+#   that have moved off public ATSs (HashiCorp -> IBM) are listed in the
+#   "Manual check" comment block at the bottom — check them in a browser
+#   once a week rather than fighting their UIs.
 
 companies:
 
-  # --- Tier 1: Dream targets (apply immediately if match found) ---
-  - name: Stripe
-    careers_url: https://stripe.com/jobs
-    ats: greenhouse
-    ats_id: stripe
-    tier: 1
+  # =========================================================================
+  # Tier 1 — Dream targets (run pipeline immediately on any match)
+  # All entries below are verified to return job listings through /scan.
+  # =========================================================================
 
-  - name: Cloudflare
-    careers_url: https://www.cloudflare.com/careers/jobs/
-    ats: greenhouse
-    ats_id: cloudflare
-    tier: 1
+  # AI labs
+  - { name: Anthropic,     careers_url: https://www.anthropic.com/careers,                ats: greenhouse, ats_id: anthropic,    tier: 1 }
+  - { name: OpenAI,        careers_url: https://openai.com/careers,                       ats: ashby,      ats_id: openai,       tier: 1 }
+  - { name: NVIDIA,        careers_url: https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite, ats: workday, ats_id: "https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite", tier: 1 }
 
-  # HashiCorp was acquired by IBM in 2025. Their public Greenhouse board
-  # may still work via the embed fallback in scripts/spiders/greenhouse.py;
-  # if it stops, drop this entry — IBM's careers portal needs auth.
-  - name: HashiCorp
-    careers_url: https://www.hashicorp.com/jobs
-    ats: greenhouse
-    ats_id: hashicorp
-    tier: 1
+  # Infra-first companies
+  - { name: Stripe,        careers_url: https://stripe.com/jobs,                          ats: greenhouse, ats_id: stripe,       tier: 1 }
+  - { name: Cloudflare,    careers_url: https://www.cloudflare.com/careers/jobs/,         ats: greenhouse, ats_id: cloudflare,   tier: 1 }
+  - { name: Datadog,       careers_url: https://www.datadoghq.com/careers/,               ats: greenhouse, ats_id: datadog,      tier: 1 }
+  - { name: Databricks,    careers_url: https://www.databricks.com/company/careers,       ats: greenhouse, ats_id: databricks,   tier: 1 }
+  - { name: Snowflake,     careers_url: https://careers.snowflake.com/us/en/search-results, ats: custom,                        tier: 1 }
+  - { name: Palantir,      careers_url: https://www.palantir.com/careers/,                ats: lever,      ats_id: palantir,     tier: 1 }
+  - { name: SpaceX,        careers_url: https://www.spacex.com/careers/,                  ats: greenhouse, ats_id: spacex,       tier: 1 }
+  - { name: Fly.io,        careers_url: https://fly.io/jobs,                              ats: custom,                          tier: 1 }
+  - { name: Coinbase,      careers_url: https://coinbase.getro.com/jobs,                  ats: custom,                          tier: 1 }
 
-  - name: Datadog
-    careers_url: https://www.datadoghq.com/careers/
-    ats: greenhouse
-    ats_id: datadog
-    tier: 1
+  # =========================================================================
+  # Tier 2 — Strong interest (apply when a clear match shows up)
+  # =========================================================================
 
-  # --- Tier 2: Strong interest ---
-  - name: PagerDuty
-    careers_url: https://www.pagerduty.com/careers/
-    ats: greenhouse
-    ats_id: pagerduty
-    tier: 2
+  # DevTools / DevOps platform
+  - { name: GitLab,        careers_url: https://about.gitlab.com/jobs/,                   ats: greenhouse, ats_id: gitlab,       tier: 2 }
+  - { name: CircleCI,      careers_url: https://circleci.com/careers/,                    ats: greenhouse, ats_id: circleci,     tier: 2 }
+  - { name: Confluent,     careers_url: https://www.confluent.io/careers/,                ats: greenhouse, ats_id: confluent,    tier: 2 }
+  - { name: Grafana Labs,  careers_url: https://grafana.com/about/careers/,               ats: greenhouse, ats_id: grafanalabs,  tier: 2 }
+  - { name: PagerDuty,     careers_url: https://www.pagerduty.com/careers/,               ats: greenhouse, ats_id: pagerduty,    tier: 2 }
+  - { name: Tailscale,     careers_url: https://tailscale.com/careers,                    ats: ashby,      ats_id: tailscale,    tier: 2 }
+  - { name: Vercel,        careers_url: https://vercel.com/careers,                       ats: ashby,      ats_id: vercel,       tier: 2 }
+  - { name: MongoDB,       careers_url: https://www.mongodb.com/careers,                  ats: greenhouse, ats_id: mongodb,      tier: 2 }
+  - { name: Sentry,        careers_url: https://sentry.io/careers/,                       ats: greenhouse, ats_id: sentry,       tier: 2 }
+  - { name: Wiz,           careers_url: https://www.wiz.io/careers,                       ats: greenhouse, ats_id: wizsecurity,  tier: 2 }
+  - { name: Fastly,        careers_url: https://www.fastly.com/about/careers,             ats: greenhouse, ats_id: fastly,       tier: 2 }
+  - { name: GitHub,        careers_url: https://www.github.careers/careers-home,          ats: workday,    ats_id: "https://github.wd1.myworkdayjobs.com/Careers", tier: 2 }
 
-  - name: Grafana Labs
-    careers_url: https://grafana.com/about/careers/
-    ats: greenhouse
-    ats_id: grafanalabs
-    tier: 2
+  # Consumer-scale tech (Greenhouse JSON API)
+  - { name: Uber,          careers_url: https://www.uber.com/us/en/careers/,              ats: greenhouse, ats_id: uber,         tier: 2 }
+  - { name: Lyft,          careers_url: https://www.lyft.com/careers,                     ats: greenhouse, ats_id: lyft,         tier: 2 }
+  - { name: Airbnb,        careers_url: https://careers.airbnb.com/,                      ats: greenhouse, ats_id: airbnb,       tier: 2 }
+  - { name: Pinterest,     careers_url: https://www.pinterestcareers.com/,                ats: greenhouse, ats_id: pinterest,    tier: 2 }
+  - { name: Reddit,        careers_url: https://www.redditinc.com/careers,                ats: greenhouse, ats_id: reddit,       tier: 2 }
+  - { name: Discord,       careers_url: https://discord.com/careers,                      ats: greenhouse, ats_id: discord,      tier: 2 }
+  - { name: DoorDash,      careers_url: https://careersatdoordash.com/,                   ats: greenhouse, ats_id: doordash,     tier: 2 }
+  - { name: Robinhood,     careers_url: https://robinhood.com/us/en/careers/,             ats: greenhouse, ats_id: robinhood,    tier: 2 }
+  - { name: Block,         careers_url: https://block.xyz/careers,                        ats: greenhouse, ats_id: square,       tier: 2 }
+  - { name: Plaid,         careers_url: https://plaid.com/careers/,                       ats: lever,      ats_id: plaid,        tier: 2 }
 
-  - name: Wiz
-    careers_url: https://www.wiz.io/careers
-    ats: greenhouse
-    ats_id: wizsecurity
-    tier: 2
+  # Workday tenants (now reliable post-payload-fix)
+  - { name: LinkedIn,      careers_url: https://careers.linkedin.com/,                    ats: workday,    ats_id: "https://linkedin.wd5.myworkdayjobs.com/LinkedIn", tier: 2 }
+  - { name: Salesforce,    careers_url: https://careers.salesforce.com/,                  ats: workday,    ats_id: "https://salesforce.wd1.myworkdayjobs.com/External_Career_Site", tier: 2 }
+  - { name: Adobe,         careers_url: https://careers.adobe.com/,                       ats: workday,    ats_id: "https://adobe.wd5.myworkdayjobs.com/external_experienced", tier: 2 }
 
-  - name: Tailscale
-    careers_url: https://tailscale.com/careers
-    ats: ashby
-    ats_id: tailscale
-    tier: 2
+  # =========================================================================
+  # Tier 3 — Watch (apply if volume permits)
+  # =========================================================================
 
-  # --- Tier 3: Watch but lower priority ---
-  - name: Fastly
-    careers_url: https://www.fastly.com/about/careers
-    ats: greenhouse
-    ats_id: fastly
-    tier: 3
+  # AI infra / GPU clouds
+  - { name: Modal,         careers_url: https://modal.com/careers,                        ats: ashby,      ats_id: modal,        tier: 3 }
+  - { name: Replicate,     careers_url: https://replicate.com/about/jobs,                 ats: ashby,      ats_id: replicate,    tier: 3 }
 
-  - name: Fly.io
-    careers_url: https://fly.io/jobs
-    ats: custom
-    tier: 3
+  # DevTools / observability
+  - { name: LaunchDarkly,  careers_url: https://launchdarkly.com/careers/,                ats: greenhouse, ats_id: launchdarkly, tier: 3 }
+  - { name: Pulumi,        careers_url: https://www.pulumi.com/careers/,                  ats: lever,      ats_id: pulumi,       tier: 3 }
+  - { name: Buildkite,     careers_url: https://buildkite.com/about/jobs,                 ats: ashby,      ats_id: buildkite,    tier: 3 }
+  - { name: Mux,           careers_url: https://mux.com/jobs,                             ats: ashby,      ats_id: mux,          tier: 3 }
+  - { name: Render,        careers_url: https://render.com/careers,                       ats: ashby,      ats_id: render,       tier: 3 }
 
-  # --- Examples of the newer board types (uncomment and customize) ---
-  # - name: Nvidia
-  #   careers_url: https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite
-  #   ats: workday
-  #   ats_id: https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite
-  #   tier: 2
-  #
-  # - name: LinkedIn (search-as-a-source, not a single company)
-  #   careers_url: https://www.linkedin.com/jobs/search
-  #   ats: linkedin
-  #   ats_id: "keywords=Platform+Engineer&location=United+States&f_TPR=r604800"
-  #   tier: 3
-  #
-  # - name: Indeed (search-as-a-source)
-  #   careers_url: https://www.indeed.com/jobs
-  #   ats: indeed
-  #   ats_id: "q=Platform+Engineer&l=remote&fromage=7"
-  #   tier: 3
+  # Productivity / consumer
+  - { name: Linear,        careers_url: https://linear.app/careers,                       ats: ashby,      ats_id: linear,       tier: 3 }
+  - { name: Notion,        careers_url: https://www.notion.so/careers,                    ats: greenhouse, ats_id: notion,       tier: 3 }
+  - { name: 1Password,     careers_url: https://www.1password.com/careers/,               ats: greenhouse, ats_id: 1password,    tier: 3 }
 
-# Role filters — applied across all companies
+  # Compliance / security
+  - { name: Vanta,         careers_url: https://www.vanta.com/company/careers,            ats: ashby,      ats_id: vanta,        tier: 3 }
+  - { name: Drata,         careers_url: https://drata.com/careers,                        ats: ashby,      ats_id: drata,        tier: 3 }
+
+  # Fintech
+  - { name: Brex,          careers_url: https://www.brex.com/careers,                     ats: greenhouse, ats_id: brex,         tier: 3 }
+  - { name: Chime,         careers_url: https://careers.chime.com/,                       ats: greenhouse, ats_id: chime,        tier: 3 }
+  - { name: Ramp,          careers_url: https://ramp.com/careers,                         ats: ashby,      ats_id: ramp,         tier: 3 }
+
+  # Big platforms (broader scope; less infra-specific)
+  - { name: Shopify,       careers_url: https://www.shopify.com/careers,                  ats: workday,    ats_id: "https://shopify.wd5.myworkdayjobs.com/shopify", tier: 3 }
+  - { name: Roblox,        careers_url: https://corp.roblox.com/careers,                  ats: greenhouse, ats_id: roblox,       tier: 3 }
+  - { name: Tesla,         careers_url: https://www.tesla.com/careers,                    ats: workday,    ats_id: "https://tesla.wd1.myworkdayjobs.com/tesla", tier: 3 }
+
+
+# =============================================================================
+# Manual-check companies (NOT scanned by /scan)
+#
+# These companies don't have a public ATS endpoint we can scrape reliably,
+# either because their careers UI is a custom SPA (FAANG except Netflix) or
+# because they've moved off public ATSs since being acquired. Check them in
+# a browser once a week rather than fighting their UIs from the spider.
+#
+# To enable any of them, uncomment and accept the limitation (mostly: noisy
+# results, hundreds of irrelevant roles that filters have to discard).
+# =============================================================================
+#
+# - { name: Google,        careers_url: https://www.google.com/about/careers/applications, ats: custom, tier: 1 }
+#     # Custom React SPA with paginated search. Spider extracts links but the
+#     # default page shows ~20 results; pagination buttons don't trigger via scroll.
+#
+# - { name: Apple,         careers_url: https://jobs.apple.com/en-us/search,               ats: custom, tier: 1 }
+#     # Custom React SPA, paginated. Same caveat as Google.
+#
+# - { name: Amazon,        careers_url: "https://www.amazon.jobs/en/search?base_query=site+reliability+OR+platform+engineer+OR+devops&country%5B%5D=USA", ats: custom, tier: 1 }
+#     # Server-side filtered URL works, but URL filters can't enforce role-type
+#     # exactly; expect retail/warehouse noise that include_keywords must filter.
+#
+# - { name: Microsoft,     careers_url: https://jobs.careers.microsoft.com/,               ats: custom, tier: 1 }
+#     # Custom SPA. Returns initial page only; doesn't paginate.
+#
+# - { name: Meta,          careers_url: https://www.metacareers.com/jobs,                  ats: custom, tier: 1 }
+#     # Uses GraphQL with rotating persisted query IDs; data is not in the
+#     # initial HTML and the spider can't extract <a> links. Manual check only.
+#
+# - { name: Netflix,       careers_url: https://jobs.netflix.com/,                         ats: custom, tier: 1 }
+#     # SPA with infinite scroll. The custom spider scrolls but content depth
+#     # is unreliable; treat results as a sample, not exhaustive.
+#
+# - { name: HashiCorp,     careers_url: https://www.hashicorp.com/jobs,                    ats: greenhouse, ats_id: hashicorp, tier: 1 }
+#     # Acquired by IBM in 2025; their public Greenhouse board is gone and
+#     # IBM's portal needs auth. No reliable scrape path. Check manually.
+
+
+# Role filters — applied across all companies.
 filters:
-  # Jobs must contain at least one include keyword (case-insensitive)
+  # Jobs must contain at least one include keyword (case-insensitive).
   include_keywords:
     - DevOps
     - SRE
     - Site Reliability
     - Platform Engineer
+    - Platform Engineering
     - Infrastructure Engineer
     - Cloud Engineer
     - Production Engineer
     - Reliability Engineer
+    - Systems Engineer
+    - Kubernetes
+    - Observability
 
-  # Jobs are skipped if they contain any exclude keyword
+  # Jobs are skipped if they contain any exclude keyword.
   exclude_keywords:
     - Staff
     - Principal
     - Director
     - Manager
     - VP
+    - Head of
+    - Lead
     - Data Scientist
     - Data Engineer
+    - ML Engineer
+    - Machine Learning
     - Frontend
-    - Backend Engineer
+    - Front End
     - Full Stack
+    - iOS
+    - Android
     - Mobile
     - Sales
     - Marketing
     - Recruiter
+    - Customer
+    - Support
+    - Intern
 
-  # Minimum confidence score to include in report (0-100)
+  # Minimum confidence score to include in report (0-100).
   min_score: 60
 
-  # Location requirements — roles not matching are excluded entirely before scoring
-  remote_only: true      # skip any role that is not explicitly remote or has a required office location
-  location: US           # skip roles located outside the US (EU, APAC, etc.) or with no US remote option
+  # Location — roles outside US are excluded entirely before scoring.
+  remote_only: true
+  location: US
