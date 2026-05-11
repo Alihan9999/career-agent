@@ -6,12 +6,30 @@ Reads `config/target-companies.yml`, fetches live job listings from each company
 relevant roles, scores each against `data/skills.md`, and reports ranked opportunities the
 candidate has not yet applied to.
 
+## Argument Parsing (token budget)
+
+By default `/scan` only checks **Tier 1** companies — the highest-priority watchlist.
+This keeps token usage low when run frequently. Override via argument:
+
+| Invocation              | Tiers scanned | Use when…                                           |
+|-------------------------|---------------|-----------------------------------------------------|
+| `/scan`                 | Tier 1 only   | Daily check (default)                               |
+| `/scan tier 2` or `/scan 2` | Tiers 1+2     | Weekly broader sweep                                |
+| `/scan tier 3` or `/scan 3` | Tiers 1+2+3   | Full watchlist (most expensive)                     |
+| `/scan all`             | All tiers     | Same as `tier 3`                                    |
+| `/scan <CompanyName>`   | One company   | Quick targeted check                                |
+
+If `config/target-companies.yml` defines `scan_tier_limit: N` at the top level, that
+becomes the default (overrides Tier-1 default but is still overridden by an explicit
+argument).
+
 ## Steps
 
 ### Step 1 — Load watchlist and candidate profile
 - Read `config/target-companies.yml` (if it does not exist, tell the user to copy `config/target-companies.example.yml` and fill it in)
 - Read `data/skills.md` — the candidate's full skill inventory used for scoring
 - Read `output/` folder names to build an already-applied list (skip companies/roles already applied to)
+- **Filter the watchlist by tier per the argument-parsing table above before doing anything else.** Print a one-line note: `Scanning N companies (tier <=K)`. This is the budget gate — every dropped company is one less spider call.
 
 ### Step 2 — Fetch job listings per company
 

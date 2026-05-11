@@ -2,6 +2,13 @@
 # Copy this file to config/target-companies.yml and fill in your list.
 # target-companies.yml is gitignored — it reveals your job search strategy.
 #
+# /scan token budget:
+#   By default `/scan` only checks Tier 1 companies to keep token usage low.
+#   Override per invocation: `/scan tier 2`, `/scan 3`, `/scan all`, or `/scan <Company>`.
+#   To raise the default for every run, set scan_tier_limit below.
+#
+scan_tier_limit: 1   # default tiers to scan: 1 (top only), 2 (top+mid), 3 (everything)
+#
 # Supported ATS platforms (used by `scripts/scrape.py board <ats> <ats_id>`):
 #   greenhouse  — JSON API. ats_id is the board slug (e.g. "stripe").
 #   lever       — JSON API. ats_id is the company slug.
