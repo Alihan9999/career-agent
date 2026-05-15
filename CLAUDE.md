@@ -1,12 +1,12 @@
-# Career Agent — AI-Powered Job Application System
+# Career Agent — AI-Powered Job Application System (v2 — Interview Conversion)
 
 ## Overview
 
-This system uses a multi-agent pipeline to automatically customize a resume and write a cover
-letter for any job posting URL. After applying, it logs the application to a Google Form tracker
-and generates a PDF. A gap analysis script surfaces recurring skill gaps across all applications.
+This system uses a multi-agent pipeline optimized for **interview conversion rate**, not application throughput. Paste a job URL: the orchestrator decides whether the job is worth applying to (most are not), picks a resume variant (A/B/C/D/E), generates resume + cover letter, runs 7 quality gates (Recruiter Psychology, Hiring Manager, Proof Density, Anti-Template, Wow Factor, Humanizer, ATS), refuses to ship if scores are below threshold, generates the PDF/DOCX, submits the form, and logs the row to `data/applications.jsonl` for rejection learning.
 
-**Entry point:** Paste a job posting URL into the chat. The orchestrator handles the rest.
+**v1 produced 80 applications and 0 interviews.** v2 trades volume for selectivity. See `analysis/system-audit.md` for the audit, `analysis/interview-conversion-redesign.md` for the architecture, and `docs/ab-variant-strategy.md` for variant routing.
+
+**Entry point:** Paste a job posting URL into the chat. The orchestrator handles the rest, and will stop the pipeline mid-flight if the application doesn't deserve to ship.
 
 ---
 
@@ -72,45 +72,91 @@ Before running any agent, the orchestrator checks:
 
 ---
 
-## Agent Pipeline
+## Agent Pipeline (v2 — Interview Conversion)
 
 ```
 Job URL
   │
   ▼
-[Pre-flight gate]         — Experience check, salary check, role type check
+[Pre-flight gate]              — experience, salary, role type, legitimacy
   │
   ▼
-[1] Job Analyzer          — Scrapes posting, extracts skills/requirements/keywords
+[1] Job Analyzer
   │
   ▼
-[2] Company Researcher    — Researches company culture, mission, recent news
+[2] Company Researcher (parallel)
   │
-  ├──────────────────────────────────┐
-  ▼                                  ▼
-[3] Resume Customizer     [4] Cover Letter Writer
-  │                                  │
-  └──────────────┬───────────────────┘
-                 ▼
-           [5] ATS Optimizer    — Reviews both docs, scores keyword match, writes ats-report.md
-                 │
-                 ▼
-           [6] Humanizer        — Breaks AI-detection signatures (perplexity/burstiness), preserves keywords
-                 │
-                 ▼
-           [7] Output Packager  — Saves all files to /output/<company>-<date>/
-                 │
-                 ▼
-           [8] Form Filler      — Submits Google tracking form
+  ▼
+[3] Application Decision Agent — classify + pick variant; STOP if not STRONG APPLY
+  │
+  ▼
+[4] Resume Customizer          — TRANSFORM bullets, 5 variants
+  │
+  ▼
+[5] Resume Narrative Strategist — enforce coherent story arc
+  │
+  ▼
+[6] Cover Letter Writer (parallel)
+  │
+  ▼
+[7] Wow Factor Strategist      — verify wow item above the fold
+  │
+  ▼
+[8] ATS Optimizer (v2)         — 7-dimensional match scoring
+  │
+  ▼
+[9] Recruiter Psychology Agent — 6-second scan simulation
+  │
+  ▼
+[10] Hiring Manager Reviewer   — 90-second manager triage
+  │
+  ▼
+[11] Proof Density Agent       — evidence count per bullet
+  │
+  ▼
+[12] Anti-Template Agent       — cross-application repetition check
+  │
+  ▼
+[13] Humanizer                 — AI-detection signature break
+  │
+  ▼
+[14] Resume Quality Gate       — composite PASS / REVISE / BLOCK (3 iter cap)
+  │
+  ▼
+[15] LinkedIn / Portfolio Alignment Agent
+  │
+  ▼
+[16] Output Packager
+  │
+  ▼
+[17] PDF / DOCX Generator
+  │
+  ▼
+[18] Form Filler
+  │
+  ▼
+[19] Rejection Learning per-app log — append to data/applications.jsonl
 ```
 
 Standalone slash commands (run on demand, not part of the pipeline):
 ```
-/analyze-gaps      — Scans all output/ folders, ranks recurring skill gaps by importance
-/project-mentor    — Generates step-by-step project schematics to fill specific skill gaps
-/interview-prep    — Generates a full interview prep doc for any company you've applied to
-/scan              — Scans target companies for new openings and scores each match
+/scan                  — Scans target companies for new openings and scores each match
+/analyze-gaps          — Scans all output/ folders, ranks recurring skill gaps by importance
+/analyze-conversions   — Weekly rejection-learning analysis: conversion rates by slice;
+                         updates data/blocked-companies.json and data/role-family-conversion.json
+/import-sheet <URL>    — Import the Google Sheets application tracker into data/applications.jsonl
+/market-signal         — Audit LinkedIn / GitHub / portfolio footprint and produce 2-week action list
+/project-mentor        — Generates project schematics with distribution plan (for credibility,
+                         not just keyword closure)
+/interview-prep        — STAR-formatted prep doc for any company you've applied to
 ```
+
+Outcome tracking flow: Form Filler writes every application to your Google Form -> the response Sheet collects rows. You update the **Status** column in the Sheet as outcomes happen. Then run:
+```
+/import-sheet <CSV_EXPORT_URL>
+/analyze-conversions
+```
+The importer is idempotent. See `.claude/commands/import-sheet.md` for the CSV URL format.
 
 ---
 
@@ -219,32 +265,47 @@ Installs: `scrapling[ai,fetchers]` (stealth scraping + Cloudflare bypass + MCP s
 
 ## Agent Roles Summary
 
-| Agent | Trigger | Input | Output |
-|---|---|---|---|
-| Job Analyzer | Every pipeline | Job URL or pasted text | `job-analysis.json` |
-| Company Researcher | Every pipeline | Company name + URL | `company-research.json` |
-| Resume Customizer | Every pipeline | job-analysis + data/ | `resume.md` |
-| Cover Letter Writer | Every pipeline | job-analysis + company-research + data/ | `cover-letter.md` |
-| ATS Optimizer | Every pipeline | resume.md + cover-letter.md + job-analysis + `ats-profiles/<name>.md` | Revised docs (with profile-correct section order + acronym expansion) + `ats-report.md` |
-| Humanizer | Every pipeline | resume.md + cover-letter.md + ats-report.md | Rewritten docs + `humanizer-report.md` |
-| Output Packager | Every pipeline | All outputs | `/output/<Company>-<date>/` folder |
-| Form Filler | Every pipeline | Output folder + job URL | Google Form submission |
-| Gap Analyzer | `/analyze-gaps` | All output/ folders | `analysis/gap-analysis-<date>.md` |
-| Project Mentor | `/project-mentor` | Latest gap analysis | `projects/<name>.md` schematic |
-| Interview Prep | `/interview-prep` | output/<Company>/ folder | `output/<Company>/interview-prep.md` |
-| Scanner | `/scan` | config/target-companies.yml + data/skills.md | `analysis/scan-<date>.md` |
+| Agent | Trigger | Output |
+|---|---|---|
+| Job Analyzer | Every pipeline | `job-analysis.json` |
+| Company Researcher | Every pipeline | `company-research.json` |
+| **Application Decision Agent** | Every pipeline | `application-decision.json` (STRONG APPLY / SKIP / NETWORKING FIRST / BUILD GAP / ...) |
+| Resume Customizer (v2) | If decision is APPLY-class | `resume.md` per variant (A/B/C/D/E) |
+| **Resume Narrative Strategist** | After Customizer | rewrites `resume.md` for arc coherence |
+| Cover Letter Writer | If APPLY-class | `cover-letter.md` |
+| **Wow Factor Strategist** | After Narrative | verifies wow item above the fold |
+| ATS Optimizer (v2) | Every pipeline | 7-dimensional `ats-report.md`; flags rather than forces unbelievable keywords |
+| **Recruiter Psychology Agent** | After ATS | `recruiter-review.md` |
+| **Hiring Manager Reviewer** | After Recruiter | `hiring-manager-review.md` |
+| **Proof Density Agent** | After Hiring Manager | `proof-density-review.md` |
+| **Anti-Template Agent** | After Proof Density | `anti-template-review.md` (cross-app bigram overlap) |
+| Humanizer | After Anti-Template | `humanizer-report.md` |
+| **Resume Quality Gate** | After Humanizer | `quality-gate-verdict.md` (PASS / REVISE / BLOCK) |
+| **LinkedIn/Portfolio Alignment Agent** | After Quality Gate PASS | `linkedin-portfolio-alignment.md` |
+| Output Packager | After Alignment | `/output/<Company>-<date>/` folder |
+| Form Filler | After packaging | Google Form submission |
+| **Rejection Learning Agent (per-app)** | After Form Filler | appends row to `data/applications.jsonl` |
+| **Rejection Learning Agent (aggregate)** | `/analyze-conversions` | `analysis/conversions-<date>.md` |
+| Gap Analyzer | `/analyze-gaps` | `analysis/gap-analysis-<date>.md` |
+| Project Mentor (v2) | `/project-mentor` | `projects/<name>.md` with distribution plan |
+| Interview Prep | `/interview-prep` | `output/<Company>/interview-prep.md` |
+| Scanner | `/scan` | `scans/scan-<date>/report.md` |
+
+New agents marked **bold**.
 
 ---
 
 ## Pipeline Rules
 
-1. **Never modify** files in `data/` — they are the source of truth.
-2. **Always create** a new subfolder in `output/` per application.
+1. **Never modify** files in `data/` (other than `data/applications.jsonl` which the pipeline maintains and `data/blocked-companies.json` + `data/role-family-conversion.json` which the learning analyzer writes).
+2. **Always create** a new subfolder in `output/` per application — only after the Quality Gate passes.
 3. Resume must be **1 page max** unless the role explicitly requires more.
 4. Cover letter must be **under 400 words**, 3 paragraphs.
-5. ATS Optimizer must verify **at least 80% of required keywords** appear in the resume.
-6. All monetary figures and dates in experience must be **preserved exactly** from source data.
-7. **Never commit** `data/`, `output/`, `analysis/`, `projects/`, or `config/google-form.md` — all gitignored.
+5. ATS Optimizer must reach **80% composite ATS score** but ATS Score alone does not unblock the gate.
+6. **Resume Quality Gate must PASS** — ALL minimum scores must clear, not just ATS. If any fail after 3 revisions, BLOCK the application.
+7. All monetary figures and dates in experience must be **preserved exactly** from source data.
+8. **Never commit** `data/`, `output/`, `analysis/`, `projects/`, `scans/`, or `config/google-form.md` — all gitignored.
+9. **Never invent** metrics, system names, or claims to clear a score. Block honestly instead.
 
 ---
 

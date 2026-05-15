@@ -1,11 +1,10 @@
 # Career Agent
 
-An AI-powered job application pipeline built on [Claude Code](https://claude.ai/code). Paste a job
-URL and it automatically customizes your resume, writes a cover letter, scores keyword coverage,
-generates a PDF, and logs the application to a Google Form tracker — all in one shot.
+An AI-powered job application pipeline built on [Claude Code](https://claude.ai/code). Paste a job URL and it customizes your resume, writes a cover letter, scores against 9 quality dimensions (recruiter scan, hiring manager confidence, proof density, wow factor, ATS, anti-template, believability, job fit), refuses to ship if quality is below threshold, generates a PDF, and logs the application to a structured outcome log for rejection learning.
 
-Bonus tools: `/analyze-gaps` surfaces recurring skill gaps across every application you've run,
-and `/project-mentor` generates a step-by-step portfolio project schematic to close those gaps.
+The system is optimized for **interview conversion rate**, not application throughput. Volume falls. Per-application quality rises. The pipeline will REFUSE to apply when the resume cannot honestly clear the bar, and instead recommend a referral path or a portfolio project that would close the credibility gap first.
+
+Bonus tools: `/analyze-gaps` surfaces recurring skill gaps; `/analyze-conversions` runs weekly rejection-learning analysis; `/import-sheet` syncs outcomes from your Google Sheets tracker; `/market-signal` audits LinkedIn / GitHub / portfolio; `/project-mentor` generates a step-by-step project schematic designed for both keyword-gap closure AND recruiter wow factor; `/scan` triages a target-company watchlist; `/interview-prep` generates STAR-formatted prep notes for any logged application.
 
 ---
 
@@ -127,60 +126,112 @@ Emphasize: distributed systems, Go, Kubernetes
 
 ### Slash commands
 
-Both commands are available as soon as you open the project in Claude Code.
+- **`/scan`** — triage target-company watchlist; ranks fresh openings 0-100 by fit
+- **`/analyze-gaps`** — frequency × importance-weighted gap aggregation across applications
+- **`/analyze-conversions`** — weekly rejection-learning analysis: conversion rates by variant, role family, ATS platform, brand tier; companies promoted to NETWORKING_FIRST; keyword correlation with positive outcomes
+- **`/import-sheet <CSV_URL>`** — pull the latest Status column from your Google Sheets tracker into `data/applications.jsonl`
+- **`/market-signal`** — audit LinkedIn / GitHub / portfolio external footprint and produce a 2-week action list
+- **`/project-mentor [gap-or-tech]`** — generate a project schematic designed for credibility + keyword gap closure, with a distribution plan (GitHub README, Hacker News submission, conference CFP, LinkedIn post, technical write-up)
+- **`/interview-prep <Company>`** — STAR-formatted prep notes for any logged application
 
-**`/analyze-gaps`** — Scans every application in `output/`, tallies recurring skill/keyword gaps
-across all of them, and writes a ranked report to `analysis/`. Use this after you've run 10+
-applications to see patterns.
-
-```
-/analyze-gaps
-```
-
-**`/project-mentor`** — Reads the latest gap analysis and generates a full production-grade
-portfolio project schematic targeting your highest-priority gaps. Saves to `projects/`.
-
-```
-/project-mentor          ← picks the project that covers the most CRITICAL gaps
-/project-mentor Go       ← centers the project on a specific technology
-```
-
-Each schematic includes: architecture diagram, tech stack justification, phase-by-phase build
-plan with exact commands, pre-written resume bullets, and interview talking points.
+Each project schematic includes architecture diagram, tech stack justification with alternatives considered, phase-by-phase build plan with exact commands, pre-written resume bullets (per variant), interview talking points, AND a distribution plan with target outlets and CFP deadlines.
 
 ---
 
-## Pipeline Architecture
+## Pipeline Architecture (v2 — Interview Conversion)
 
 ```
 Job URL
   │
   ▼
-[Pre-flight gate]         ← experience check, salary check, role type check
+[Pre-flight gate]              ← experience, salary, role type, legitimacy
   │
   ▼
-[1] Job Analyzer          ← scrapes posting, extracts skills/requirements/keywords
+[1] Job Analyzer               ← scrape + extract structured signals
   │
   ▼
-[2] Company Researcher    ← researches culture, mission, recent news
+[2] Company Researcher         ← parallel
   │
-  ├──────────────────────────────────┐
-  ▼                                  ▼
-[3] Resume Customizer     [4] Cover Letter Writer
-  │                                  │
-  └──────────────┬───────────────────┘
-                 ▼
-           [5] ATS Optimizer    ← scores keyword match, rewrites until ≥80% coverage
-                 │
-                 ▼
-           [6] Output Packager  ← saves all files to output/<Company>-<date>/
-                 │
-                 ▼
-           [7] PDF Generator    ← renders resume.pdf + cover-letter.pdf via Puppeteer
-                 │
-                 ▼
-           [8] Form Filler      ← submits Google tracking form via curl
+  ▼
+[3] Application Decision Agent ← classify: STRONG APPLY / WITH CUSTOMIZATION /
+  │                              NETWORKING FIRST / SKIP / BUILD GAP / TOO SENIOR /
+  │                              WRONG ROLE / LOW ROI
+  │                              Decides variant (A/B/C/D/E). Most jobs are NOT
+  │                              STRONG APPLY. Volume falls deliberately.
+  │
+  ▼
+[4] Resume Customizer          ← transform bullets (not just select). 5 variants.
+  │
+  ▼
+[5] Resume Narrative Strategist ← enforce coherent story arc; fix conflicts
+  │
+  ▼
+[6] Cover Letter Writer        ← parallel
+  │
+  ▼
+[7] Wow Factor Strategist      ← verify the wow item is above the fold
+  │
+  ▼
+[8] ATS Optimizer (v2)         ← 7-dimensional match scoring, flag-not-force
+  │                              keyword insertion
+  │
+  ▼
+[9] Recruiter Psychology Agent ← simulate the 6-second scan
+  │
+  ▼
+[10] Hiring Manager Reviewer   ← simulate the manager's 90-second triage
+  │
+  ▼
+[11] Proof Density Agent       ← count evidence elements per bullet
+  │
+  ▼
+[12] Anti-Template Agent       ← cross-application repetition check
+  │
+  ▼
+[13] Humanizer                 ← break AI-detection signatures (existing)
+  │
+  ▼
+[14] Resume Quality Gate       ← composite PASS / REVISE / BLOCK
+  │                              up to 3 revise iterations
+  │
+  ├─── BLOCK ──> log to applications.jsonl with reason, stop, recommend
+  │             BUILD GAP PROJECT FIRST or NETWORKING FIRST
+  │
+  ▼
+[15] LinkedIn / Portfolio Alignment Agent ← cross-channel consistency
+  │
+  ▼
+[16] Output Packager           ← write to output/<Company>-<date>/
+  │
+  ▼
+[17] PDF / DOCX Generator      ← Puppeteer / html-to-docx per ATS profile
+  │
+  ▼
+[18] Form Filler               ← submit Google tracking form
+  │
+  ▼
+[19] Rejection Learning per-app ← append row to data/applications.jsonl
 ```
+
+### Minimum scores to ship
+
+The Resume Quality Gate blocks Output Packager unless ALL of:
+
+| Score | Minimum |
+|---|---|
+| ATS Score | 80% |
+| Recruiter 6-Second Scan | 8/10 |
+| Hiring Manager Confidence | 8/10 |
+| Technical Depth | 8/10 |
+| Proof Density | 8/10 |
+| Wow Factor | 7/10 |
+| AI-Genericness Risk | <= 3/10 (lower is better) |
+| Resume Believability | 8/10 |
+| Job Fit Probability | 7/10 |
+
+If any fail, the system revises up to 3 times. On final fail, the application is BLOCKED. The system does NOT generate PDFs and does NOT submit the form. It logs the block reason and recommends `/project-mentor` or a referral path.
+
+This is deliberately strict. Most current outputs would fail the gate. That is the point.
 
 ---
 

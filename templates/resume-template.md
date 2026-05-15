@@ -1,6 +1,6 @@
 # Resume Template — Formatting Rules
 
-The Resume Customizer must produce output that exactly follows these rules.
+The Resume Customizer must produce output that exactly follows these rules. The template now supports **five variants** (A/B/C/D/E) chosen by the Application Decision Agent. See `docs/ab-variant-strategy.md` for which variant goes where.
 
 ---
 
@@ -12,26 +12,48 @@ The Resume Customizer must produce output that exactly follows these rules.
 
 ## Section Order
 
-Two valid layouts exist. The Resume Customizer produces **Layout A** by default;
-the ATS Optimizer rearranges to **Layout B** if `ats_platform` in
-`job-analysis.json` is `greenhouse` or `workday` (their parsers map Skills first
-to scorecard criteria).
+Five layouts exist now (one per variant). The Resume Customizer reads `recommended_variant` from `application-decision.json` and uses the matching layout.
 
-**Layout A — Experience-first (default for Lever, iCIMS, Taleo, Ashby, generic):**
-1. Header (`# Name` + contact line)
+**Variant A — ATS-Heavy (no headline, traditional shape):**
+1. Header (`# Name` + contact line, no headline)
 2. `## Professional Experience`
-3. `## Projects` (if space permits and relevant)
-4. `## Technical Skills`
+3. `## Projects`
+4. `## Technical Skills` (wide categorization, dense)
 5. `## Education`
 
-**Layout B — Skills-first (Greenhouse, Workday):**
+**Variant B — Recruiter-Impact-Heavy (headline + Selected Achievements):**
 1. Header (`# Name` + contact line)
-2. `## Technical Skills`
+2. **Headline** — 1 bold line below contact line, ~120 chars, naming positioning + 2-3 anchors
+3. `**Selected Achievements**` — 3-line block, three distinct domain wins
+4. `## Professional Experience`
+5. `## Selected Projects`
+6. `## Technical Skills` (focused Selected Stack, 8-12 tools + Languages line)
+7. `## Education`
+
+**Variant C — SRE/Platform Narrative (projects before experience):**
+1. Header + Headline + Selected Achievements (3 lines)
+2. `## Selected Projects` (Homelab first; rename to "Production Kubernetes Platform (Homelab-Hosted)")
 3. `## Professional Experience`
-4. `## Projects` (if space permits and relevant)
+4. `## Technical Skills` (Kubernetes + GitOps stack front)
 5. `## Education`
 
-**No summary section.** Section headers use title case, not ALL CAPS.
+**Variant D — Automation / Project-Heavy (AI projects lead):**
+1. Header + Headline (AI-infra positioning) + Selected Achievements (project-led)
+2. `## Selected Projects` (0rca first, Career Agent second, Homelab third)
+3. `## Professional Experience` (compressed)
+4. `## Technical Skills` (AI Tooling row prominent)
+5. `## Education`
+
+**Variant E — Conservative Enterprise DevOps (no headline, legacy-friendly):**
+1. Header (no headline)
+2. `## Professional Experience` (lead with 1,000+ multi-OS + Splunk SIEM)
+3. `## Projects`
+4. `## Technical Skills` (wide; AIX / Solaris / Octopus Deploy visible)
+5. `## Education`
+
+**ATS Profile Override:** For Greenhouse and Workday + Variant A/E, the ATS Optimizer may swap Technical Skills to position 2 (Skills-first scorecard mapping). For Variants B/C/D, the headline + Selected Achievements already foreground positioning; do not double-flip.
+
+Section headers use title case, not ALL CAPS.
 
 ## Parser-Safe Constraints (apply to both layouts)
 - Single column only — never two-column (61% of ATS parsers drop the right column entirely)
@@ -44,15 +66,32 @@ to scorecard criteria).
   ATS Optimizer applies that swap if the profile demands it)
 
 ## Header Format
+
+**Variant A and E** (no headline):
 ```
 # FIRSTNAME LASTNAME
 email@example.com | (555) 123-4567 | linkedin.com/in/yourhandle | yoursite.com
 ```
-- Name uses `#` (h1) so it renders centered and large in the PDF
-- All contact info on one line immediately below, separated by ` | `
+
+**Variants B, C, D** (with headline + Selected Achievements):
+```
+# FIRSTNAME LASTNAME
+email@example.com | (555) 123-4567 | linkedin.com/in/yourhandle | yoursite.com
+**Platform / SRE Engineer | Go Kubernetes operator in production, GitOps across 12 Helm charts, $30k/month cost optimization platform**
+
+**Selected Achievements**
+- Production Go Kubernetes operator (kubebuilder) running 60s reconciliation in a homelab K8s platform; 12 Helm charts deployed via ArgoCD GitOps; OpenTelemetry pipeline to Datadog across 6 services
+- Scaled developer-platform CI/CD onboarding from 10 to 200+ application teams via a ServiceNow-triggered intake; eliminated manual setup org-wide
+- Built AWS cost optimization platform (Lambda + EventBridge + Terraform) cutting non-production compute by $30k/month
+```
+
+- Name uses `#` (h1)
+- Contact line: ` | ` separated
+- Headline (variants B/C/D): one bold line, ~120 chars, names positioning + 2-3 anchors
+- Selected Achievements block (variants B/C/D): exactly 3 bullets, each a distinct domain win
 - LinkedIn and Portfolio as plain visible URLs — not masked as link text
-- No city/state in header — location is already shown in the experience entry
-- Go straight into the first `##` section — no `---` divider, no blank line between header and section
+- No city/state in header — location is shown in the experience entry
+- Go straight into the first `##` section — no `---` divider
 
 ## Section Headers
 ```

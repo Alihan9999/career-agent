@@ -13,6 +13,13 @@ venv/
 data/*.md
 !data/*.example.md
 
+# Application outcome log, learning analyzer outputs, data backups (all contain personal job-search data)
+data/applications.jsonl
+data/blocked-companies.json
+data/role-family-conversion.json
+data/learned-weights.json
+data/backups/
+
 # Generated application output (contains personal resume/cover letter data)
 output/*/
 !output/.gitkeep

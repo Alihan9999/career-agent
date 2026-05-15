@@ -40,6 +40,11 @@ BLOCKED_PATH_PATTERNS = [
     (r"\.pfx$", "PKCS#12 archive"),
     (r"\.pdf$", "PDF artifact (gitignored)"),
     (r"^data/.+\.md$", "personal data (real resume content)"),
+    (r"^data/applications\.jsonl$", "personal application outcome log"),
+    (r"^data/blocked-companies\.json$", "personal job-search company list"),
+    (r"^data/role-family-conversion\.json$", "personal conversion stats"),
+    (r"^data/learned-weights\.json$", "personal learned weights"),
+    (r"^data/backups/", "data file backups (contain personal resume)"),
     (r"^output/", "generated application output"),
     (r"^analysis/", "gap analysis output"),
     (r"^projects/", "project schematics"),
@@ -102,6 +107,7 @@ def git_staged_files() -> list[str]:
     out = subprocess.run(
         ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR"],
         capture_output=True, text=True, check=True,
+        encoding="utf-8", errors="replace",
     ).stdout
     return [line for line in out.splitlines() if line.strip()]
 
@@ -111,7 +117,10 @@ def git_staged_diff(path: str) -> str:
     out = subprocess.run(
         ["git", "diff", "--cached", "-U0", "--", path],
         capture_output=True, text=True, check=False,
+        encoding="utf-8", errors="replace",
     ).stdout
+    if out is None:
+        return ""
     added = []
     for line in out.splitlines():
         if line.startswith("+++"):
