@@ -34,10 +34,10 @@ Score each on the rubric below. Write the score AND the one-line reason.
 - 0: Off-domain. Classify as WRONG ROLE.
 
 **Seniority fit (0-3)** — calibrated against the 101-application history; Senior titles converted 0 times
-- 3: Mid / no year count / 2-3 years / 3+ years / Associate / Junior.
+- 3: Mid / no year count / 2-3 years / 3+ years / Associate / Junior / "II" with 2-4 years required.
 - 2: 4+ years required AND title is NOT Senior+ (and the user explicitly passed the pre-flight FLAG ask).
 - 1: never used — eliminated after May 2026 calibration showed the in-between band has 0 historical conversions.
-- 0: 5+ years OR title contains Senior / Sr. / Sr / II / Staff / Principal / Lead / Architect. Classify as TOO SENIOR. The pre-flight gate should have caught this; this score is a backstop.
+- 0: 5+ years OR title contains Senior / Sr. / Sr / Staff / Principal / Lead / Architect. Classify as TOO SENIOR. The pre-flight gate should have caught this; this score is a backstop. (Note: "II" alone no longer maps to 0 — see orchestrator Gate 1 rationale.)
 
 **Skill match (0-3)**
 - 3: All must_have_requirements are covered in `data/skills.md` at Proficient or Expert, OR via a substantive project in `data/projects.md`.

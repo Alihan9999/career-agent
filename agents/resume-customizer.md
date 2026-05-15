@@ -23,26 +23,26 @@ Pick the bullet selection AND the lead-story emphasis based on the variant.
 - Use for: iCIMS-strict, Workday enterprise, Taleo, government tech, banking.
 - Lead bullet: whichever bullet contains the most must_have_requirements tokens.
 - Selected Stack: all tools listed in JD that match skills.md, in JD order.
-- Avoid the Selected Achievements block — recruiters at these companies don't read it; they scan for tokens.
+- No Achievements block (consistent with the 2026-05-15 default-off rule across all variants).
 
 ### Variant B — Recruiter-Impact-Heavy
 - Maximizes the 6-second scan win.
 - Use for: FAANG, brand-name startups, design-forward companies, AI labs.
-- Add a Selected Achievements 3-line block immediately under the headline.
+- **Do NOT add an Achievements block.** The 2026-05-15 default is headline-only — the Experience and Projects bullets carry the anchor metrics already. Only add an Achievements block if the user explicitly requests one for this run.
 - Lead bullet: the most impressive metric tied to a brand-recognizable system.
 - Skills: trimmed to a focused Selected Stack of 8-12 tools + Languages line.
 
 ### Variant C — SRE/Platform Narrative
 - Maximizes the platform-engineering story.
 - Use for: Grafana, Datadog, Tailscale, Vercel, Cloudflare, infra-native companies.
-- Lead bullet: the 200+ apps platform OR the homelab Go operator (if Projects can be promoted into a "Selected Projects" block at the top).
+- Lead Experience bullet: the 200+ apps platform. Projects stay at the bottom (Experience-first per the 2026-05-15 default; projects-first was rejected as reading "junior / new grad").
 - Project section: Homelab Platform first (lift Go kubebuilder, ArgoCD app-of-apps, OTel pipeline). 0rca and Career Agent secondary.
 - Skills: K8s + GitOps stack front.
 
 ### Variant D — Automation / Project-Heavy
 - Maximizes the multi-agent / AI-infra story.
 - Use for: Anthropic, OpenAI-infra, AI-native startups, agent platforms.
-- Lead with 0rca + Career Agent (Selected Projects on top).
+- Lead Experience with the AI-adjacent bullets (200+ apps platform with shift-left scanning fits here) and put 0rca + Career Agent as the first two Project entries. Projects still sit at the bottom of the resume (Experience-first).
 - Experience bullets compressed; projects expanded.
 - Skills: AI Tooling row prominent.
 
@@ -103,9 +103,15 @@ The current employer's job title remains "DevOps Engineer." The headline is your
 
 For Variants A and E, no headline — go straight from contact line to first section.
 
-### Step 6 — Decide on Selected Achievements (Variant B only, optionally Variant C)
+### Step 6 — Achievements block (OPT-IN ONLY, OFF BY DEFAULT)
 
-If using Variant B and the page has room, insert a 3-line "Selected Achievements" block directly under the headline:
+**Default behavior: do NOT include an Achievements block.** The 2026-05-15 user-feedback rule supersedes the original Variant B/C/D spec. Experience and Projects bullets carry the anchor metrics already; a separate block restates them and bloats the top of the resume above where the recruiter reaches Experience.
+
+Only include an `**Achievements**` block (no "Selected" prefix) if BOTH:
+1. The user explicitly requests one for this specific run.
+2. Each of the 3 lines adds information the body sections don't already surface (a cross-cutting metric, a multi-project synthesis, etc.).
+
+If included, the block format is:
 
 ```
 **Selected Achievements**
@@ -118,9 +124,15 @@ Three lines. Three different domain wins. Don't fill it with five lines of the s
 
 ### Step 7 — Section order
 
-- Variants A, B, E: Header (+ headline + selected achievements for B) -> Professional Experience -> Selected Projects -> Technical Skills -> Education
-- Variant C: Header + headline + selected achievements (3 lines) -> Selected Projects (Homelab first) -> Professional Experience -> Technical Skills -> Education
-- Variant D: Header + headline + selected achievements (3 lines, all project-led) -> Selected Projects -> Professional Experience -> Technical Skills -> Education
+**Default shape (Variants B/C/D, updated 2026-05-15):** Header + 1-line Headline → Professional Experience → Projects → Technical Skills → Education. No Achievements block. Headline 80-90 chars max 95.
+
+- Variant A: Header (no headline) → Professional Experience → Projects → Technical Skills → Education
+- Variant B: default shape with recruiter-impact headline (B1-B4 from headline-bank.md)
+- Variant C: default shape with K8s/GitOps headline (C1-C4 from headline-bank.md); Projects section has Homelab first
+- Variant D: default shape with AI-infra headline (D1-D3 from headline-bank.md); Projects section has 0rca + Career Agent first, then Homelab
+- Variant E: Header (no headline) → Professional Experience → Projects → Technical Skills → Education (legacy-friendly bullets emphasized)
+
+**Greenhouse / Workday ATS override:** for Variants A or E only, may swap Technical Skills to position 2 (Skills-first scorecard mapping). For Variants B/C/D the headline + Experience-first ordering wins — do not double-flip.
 - For Greenhouse and Workday ATS, swap Technical Skills to position 2 per their profile (this is overridden by Variant C/D if their structures already foreground projects).
 
 ### Step 8 — Source Verification (MANDATORY)

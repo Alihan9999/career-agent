@@ -12,39 +12,33 @@ The Resume Customizer must produce output that exactly follows these rules. The 
 
 ## Section Order
 
-Five layouts exist now (one per variant). The Resume Customizer reads `recommended_variant` from `application-decision.json` and uses the matching layout.
+**Updated 2026-05-15 after the Fabletics run feedback:** the default resume shape is **Experience-first with a one-line headline only**. The Achievements block and projects-first ordering are special-case patterns, NOT defaults. Section labels never carry a "Selected" prefix — use `## Projects` not `## Selected Projects`, and `**Achievements**` (no "Selected") on the rare occasions the block is used.
 
-**Variant A — ATS-Heavy (no headline, traditional shape):**
-1. Header (`# Name` + contact line, no headline)
+**Default shape for Variants B/C/D (and the recommended starting point for any application):**
+1. Header (`# NAME` + contact line)
+2. **Headline** — one bold line, **target 80-90 chars (max 95)** so it never wraps to a second line. Names positioning + 2-3 anchors. Example: `**Platform Engineer | K8s operator in Go, full GitOps via ArgoCD, OpenTelemetry to Datadog**`
+3. `## Professional Experience`
+4. `## Projects`
+5. `## Technical Skills`
+6. `## Education`
+
+**Variant A — ATS-Heavy (no headline):**
+1. Header (no headline)
 2. `## Professional Experience`
 3. `## Projects`
 4. `## Technical Skills` (wide categorization, dense)
 5. `## Education`
 
-**Variant B — Recruiter-Impact-Heavy (headline + Selected Achievements):**
-1. Header (`# Name` + contact line)
-2. **Headline** — 1 bold line below contact line, ~120 chars, naming positioning + 2-3 anchors
-3. `**Selected Achievements**` — 3-line block, three distinct domain wins
-4. `## Professional Experience`
-5. `## Selected Projects`
-6. `## Technical Skills` (focused Selected Stack, 8-12 tools + Languages line)
-7. `## Education`
+**Variant B — Recruiter-Impact (default shape with headline):**
+- Use the default shape above. Headline names positioning + 2-3 brand-recognizable anchors.
 
-**Variant C — SRE/Platform Narrative (projects before experience):**
-1. Header + Headline + Selected Achievements (3 lines)
-2. `## Selected Projects` (Homelab first; rename to "Production Kubernetes Platform (Homelab-Hosted)")
-3. `## Professional Experience`
-4. `## Technical Skills` (Kubernetes + GitOps stack front)
-5. `## Education`
+**Variant C — SRE/Platform Narrative (default shape, K8s/GitOps headline emphasis):**
+- Use the default shape above. Headline leads with Platform Engineer positioning and K8s/GitOps/OTel anchors. Project section MUST include the homelab as the first entry.
 
-**Variant D — Automation / Project-Heavy (AI projects lead):**
-1. Header + Headline (AI-infra positioning) + Selected Achievements (project-led)
-2. `## Selected Projects` (0rca first, Career Agent second, Homelab third)
-3. `## Professional Experience` (compressed)
-4. `## Technical Skills` (AI Tooling row prominent)
-5. `## Education`
+**Variant D — Automation / Project-Heavy (default shape, AI-infra headline emphasis):**
+- Use the default shape above. Headline leads with LLM-Infrastructure / Multi-Agent positioning. Project section MUST include 0rca + Career Agent before the homelab.
 
-**Variant E — Conservative Enterprise DevOps (no headline, legacy-friendly):**
+**Variant E — Conservative Enterprise (no headline):**
 1. Header (no headline)
 2. `## Professional Experience` (lead with 1,000+ multi-OS + Splunk SIEM)
 3. `## Projects`
@@ -73,25 +67,23 @@ Section headers use title case, not ALL CAPS.
 email@example.com | (555) 123-4567 | linkedin.com/in/yourhandle | yoursite.com
 ```
 
-**Variants B, C, D** (with headline + Selected Achievements):
+**Variants B, C, D** (headline only — no Achievements block by default):
 ```
 # FIRSTNAME LASTNAME
 email@example.com | (555) 123-4567 | linkedin.com/in/yourhandle | yoursite.com
-**Platform / SRE Engineer | Go Kubernetes operator in production, GitOps across 12 Helm charts, $30k/month cost optimization platform**
-
-**Selected Achievements**
-- Production Go Kubernetes operator (kubebuilder) running 60s reconciliation in a homelab K8s platform; 12 Helm charts deployed via ArgoCD GitOps; OpenTelemetry pipeline to Datadog across 6 services
-- Scaled developer-platform CI/CD onboarding from 10 to 200+ application teams via a ServiceNow-triggered intake; eliminated manual setup org-wide
-- Built AWS cost optimization platform (Lambda + EventBridge + Terraform) cutting non-production compute by $30k/month
+**Platform Engineer | K8s operator in Go, full GitOps via ArgoCD, OpenTelemetry to Datadog**
 ```
 
 - Name uses `#` (h1)
 - Contact line: ` | ` separated
-- Headline (variants B/C/D): one bold line, ~120 chars, names positioning + 2-3 anchors
-- Selected Achievements block (variants B/C/D): exactly 3 bullets, each a distinct domain win
+- Headline (variants B/C/D): one bold line, **target 80-90 chars (hard max 95)** so it never wraps to a second line at 9.5pt Arial. Names the positioning + 2-3 anchors.
 - LinkedIn and Portfolio as plain visible URLs — not masked as link text
 - No city/state in header — location is shown in the experience entry
 - Go straight into the first `##` section — no `---` divider
+
+### Achievements block (OPTIONAL, OFF BY DEFAULT)
+
+An `**Achievements**` block (3 lines, no "Selected" prefix) MAY be added between the headline and the first section when the user explicitly requests it for a specific run. **Do not add it by default.** Reason: the Experience and Projects bullets already carry the anchor metrics (200+ apps, $30k/month, 60-second reconciliation, etc.) — a separate Achievements block restates them and bloats the top of the resume. If used, each line must add information not already in the body sections (e.g., a cross-cutting metric the body bullets don't surface). Verified through the Fabletics application 2026-05-15: the Achievements block read as duplicative and was dropped, freeing two visual lines of breathing room.
 
 ## Section Headers
 ```

@@ -6,6 +6,25 @@ The goal is not "test five variants and pick the winner." It is "use the right r
 
 ---
 
+## Default shape (updated 2026-05-15)
+
+After the Fabletics 2026-05-14 run, the user explicitly rejected the previous Variant B/C/D shape (headline + Selected Achievements block + Projects above Experience). New defaults for Variants B/C/D:
+
+1. Header (`# NAME` + contact line)
+2. **Headline** — one bold line, **80-90 chars (hard max 95)** to fit one line at 9.5pt Arial without wrap
+3. `## Professional Experience` (Experience above Projects)
+4. `## Projects` (not "Projects")
+5. `## Technical Skills`
+6. `## Education`
+
+**No "Selected Achievements" block by default.** The Experience and Projects bullets carry the anchor metrics already — a separate Achievements block restates them and bloats the top of the resume. Add an `**Achievements**` block (no "Selected" prefix) only when the user explicitly requests it AND each line adds information the body sections don't surface.
+
+**Section labels never carry a "Selected" prefix.** Use `## Projects` not `## Projects`.
+
+This is a hard departure from the v2 spec written in May 2026 — keep the new shape as default until conversion data indicates otherwise.
+
+---
+
 ## Variant A — ATS-Heavy
 
 **Lead story:** "This person matches every technical line item on the JD."
@@ -40,53 +59,40 @@ The goal is not "test five variants and pick the winner." It is "use the right r
 - Design-forward / developer-tools companies.
 - Any company where the recruiter scans 50+ resumes per day and the 6-second scan is the binding constraint.
 
-**Section order:** Header + 1-line Headline + Selected Achievements (3 lines) -> Professional Experience -> Selected Projects -> Technical Skills -> Education.
+**Section order:** Use the default shape (Header + Headline → Professional Experience → Projects → Skills → Education). **No Achievements block by default.**
 
-**Headline format:**
+**Headline:** pulled from `data/headline-bank.md` Variant B set (B1-B4), 80-90 chars. Names role + 3 anchors. Example (B1):
 ```
-**Platform / SRE Engineer | Go Kubernetes operator in production, GitOps across 12 Helm charts, $30k/month cost optimization platform**
+**Platform Engineer | K8s operator in Go, ArgoCD GitOps, $30k/month FinOps platform**
 ```
-One line, ~120 characters, three concrete anchors.
-
-**Selected Achievements format:**
-```
-**Selected Achievements**
-- Production Go Kubernetes operator (kubebuilder) running 60s reconciliation in a homelab K8s platform; 12 Helm charts deployed via ArgoCD GitOps; OpenTelemetry pipeline to Datadog across 6 services
-- Scaled developer-platform CI/CD onboarding from 10 to 200+ application teams via a ServiceNow-triggered intake; eliminated manual setup org-wide
-- Built AWS cost optimization platform (Lambda + EventBridge + Terraform) cutting non-production compute by $30k/month
-```
-Three lines. Three different domain wins. Each line names a wow item.
 
 **Bullet posture:** shorter bullets (15-20 words). Strong verbs, named systems, exact metrics (no tildes). Bold sparingly.
 
-**Skills section:** Selected Stack (8-12 tools) + Languages line + Education. Narrow.
+**Skills section:** Selected Stack (8-12 tools per row) + Languages line. Narrow.
 
 **Cover letter:** strong hook on a specific JD detail; one story deep; closing question that exposes operational thinking.
 
-**Anti-pattern:** do not use for Taleo or iCIMS-strict — the headline + Selected Achievements get ignored by literal token matchers, costing keyword density for no recruiter benefit.
+**Anti-pattern:** do not use for Taleo or iCIMS-strict — the headline gets ignored by literal token matchers, costing keyword density for no recruiter benefit. Use Variant A for those.
 
 ---
 
-## Variant C — SRE / Platform Narrative
+## Variant C — Platform Engineering Narrative (Kubernetes + GitOps emphasis)
 
-**Lead story:** "This person runs production-grade Kubernetes infrastructure on their own time the way a senior SRE does at work."
+**Lead story:** "This person runs production Kubernetes infrastructure with the same patterns the target company uses (Go operator, ArgoCD app-of-apps, OpenTelemetry to Datadog)."
 
 **Use for:**
-- SRE roles at infra-native companies (Grafana, Datadog, Tailscale, Vercel, Cloudflare, Cockroach).
-- Platform Engineer roles where Kubernetes / GitOps / OpenTelemetry are core.
-- Any role where the homelab + Go operator + ArgoCD + OTel stack is closer to the job than the paid-work history is.
+- Platform Engineer / SRE roles at infra-native companies (Grafana, Datadog, Tailscale, Vercel, Cloudflare, Cockroach, Fabletics-style hybrid EKS + on-prem).
+- Any role where the homelab's K8s + GitOps + OTel stack maps directly to the JD's primary stack.
 
-**Section order:** Header + Headline + Selected Achievements -> Selected Projects (Homelab first, renamed "Production Kubernetes Platform (Homelab)") -> Professional Experience -> Technical Skills -> Education.
+**Section order:** Use the default shape (Header + Headline → Professional Experience → Projects → Skills → Education). **No Achievements block by default.** Experience leads — the user explicitly rejected Projects-first ordering on 2026-05-14 because it bloated the top of the resume and read as "junior / new grad" to anyone expecting traditional resume shape.
 
-**Headline emphasis:** Platform / SRE positioning; lead with Kubernetes / Go / GitOps / OTel.
+**Headline emphasis:** Platform Engineer (NOT "Platform / SRE Engineer" — drop the SRE half because SRE-titled family is 0/30 in conversion data). Lead with K8s + GitOps + OTel anchors. Pull from `data/headline-bank.md` C1-C3.
 
-**Projects come BEFORE Experience.** This is the unusual choice and the variant's defining move. The homelab is positioned as the strongest evidence of capability for THIS role. paid-work bullets are still present but framed as "in addition to the homelab work."
+**Renaming:** "Homelab Platform" → "Production Kubernetes Platform (Homelab)" in the Projects section header to give the project weight without overclaiming.
 
-**Renaming:** "Homelab Platform" -> "Production Kubernetes Platform (Homelab-Hosted)" to give it weight. "Career Agent" -> "Multi-Agent MCP Pipeline" if the role is AI-infra.
+**Bullet posture:** Experience bullets carry the paid-work anchors (200+ apps, 2.5 TB/day Splunk, $30k/month FinOps, VMware-to-AWS migration). Projects section has 2 bullets max — the homelab cluster + operator combo. No 0rca/Career Agent in Variant C (those are Variant D).
 
-**Bullet posture:** the first 2 project bullets are the wow items (Go operator with kubebuilder; full GitOps via ArgoCD app-of-apps; OTel Collector to Datadog). The first Experience bullet is the 200+ apps platform.
-
-**Anti-pattern:** do not use for enterprise SRE roles where the recruiter expects a traditional resume shape — they will read "Projects first" as "junior / new grad."
+**Anti-pattern:** do not use for AI-infra-led targets — Variant D is stronger there. Do not use the old projects-first shape — verified to read poorly to the user / candidate themselves.
 
 ---
 
@@ -100,9 +106,12 @@ Three lines. Three different domain wins. Each line names a wow item.
 - AI-native startups building agent platforms.
 - Developer-tools companies with active AI angles (LangChain, LlamaIndex, Tavily, etc.).
 
-**Section order:** Header + Headline + Selected Achievements (3 project-led lines) -> Selected Projects (0rca first, Career Agent second, Homelab third) -> Professional Experience -> Technical Skills -> Education.
+**Section order:** Use the default shape (Header + Headline → Professional Experience → Projects → Skills → Education). **No Achievements block by default.** Projects section includes 0rca first, Career Agent second, Homelab third — but stays at the bottom of the resume per the 2026-05-14 user preference.
 
-**Headline emphasis:** "AI-infra / multi-agent / MCP" positioning. Example: "LLM-Infrastructure & Platform Engineer | 28-agent DAG orchestration, 9-agent MCP pipeline, production Kubernetes platform"
+**Headline emphasis:** "LLM-Infrastructure / Multi-Agent" positioning. Pull from `data/headline-bank.md` D1-D3. Example (D1):
+```
+**LLM-Infrastructure Engineer | 28-agent DAG orchestrator, 9-agent MCP pipeline, K8s in Go**
+```
 
 **0rca framing:** lead with "Designed a DAG-based task orchestration engine running up to 4 parallel agent streams across a 3-tier hierarchy of 28+ agents" — this is the wow item.
 
@@ -124,7 +133,7 @@ Three lines. Three different domain wins. Each line names a wow item.
 - Banking, insurance, healthcare IT.
 - Legacy-aware infrastructure roles where AIX / Solaris / Octopus Deploy / ServiceNow is a POSITIVE.
 
-**Section order:** Header (no headline) -> Professional Experience -> Selected Projects -> Technical Skills -> Education. Traditional shape.
+**Section order:** Header (no headline) -> Professional Experience -> Projects -> Technical Skills -> Education. Traditional shape.
 
 **Bullet posture:** lead with the 1,000+ multi-OS server bullet and the Splunk SIEM cluster bullet. The 200+ apps platform is second. Tilde-metrics are tolerated.
 

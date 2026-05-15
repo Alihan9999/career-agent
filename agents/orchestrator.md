@@ -52,11 +52,11 @@ Fetch the job posting and check these gates in order. If any gate fires, stop an
 Real data calibration: the candidate's 101-application history shows 6 applications submitted to Senior-titled roles (Microsoft, NVIDIA, Vercel Forward Deployed, Netflix, OpenAI, HomeDepot, Defense Unicorns, etc.) — all 0 conversions. Senior titles do not convert for this candidate. The gate is therefore strict:
 
 - **5+ years required: HARD SKIP. No exception.**
-- **Title contains "Senior", "Sr.", "Sr ", or "II" with no offsetting clarification: HARD SKIP.** Even if the JD also says "or equivalent." Even if a friend recommended it. The pattern is empirically dead.
-- **Staff, Principal, Lead, Architect: HARD SKIP.**
+- **Title contains "Senior", "Sr.", "Sr ", "Staff", "Principal", "Lead", "Architect": HARD SKIP unconditionally.** Pattern is empirically dead in the candidate's 101-application history.
+- **Title contains "II"**: HARD SKIP only if JD requires **5+ years**. If JD requires 4 years or fewer (typical mid-level "II" track), treat as level-2 mid and proceed. **Rationale (added 2026-05-15):** at many modern shops "II" is the standard progression after "I" — strict HARD SKIP on "II" was an overreach and created false negatives. The years-required field carries the experience gate; the "II" alone is not a senior signal.
 - **"Mid / Senior" combo titles (e.g., "Site Reliability Engineer (Mid / Senior)"): HARD SKIP if the JD-required experience is 4+ years.** Default to skip if ambiguous.
 - 4+ years required (and title is NOT Senior+): flag, ask.
-- Mid / no year count / 3+ years / Associate / Junior: proceed.
+- Mid / no year count / 3+ years / Associate / Junior / "II" with 2-4 years required: proceed.
 
 If the user passes `--override` for this gate, log the override in the application row's `resume_notes` field with the reason. The Application Decision Agent will still likely down-classify these — `--override` does not bypass the Decision Agent.
 
@@ -139,9 +139,14 @@ Branch on `decision`:
 - Spawn **LinkedIn / Portfolio Alignment Agent** with: resume.md + cover-letter.md + data/personal-info.md.
 - Writes `linkedin-portfolio-alignment.md`. Recommendations surface in final summary but do NOT block.
 
-### Phase 11 — Delivery
+### Phase 11 — Delivery (MANDATORY — never skip)
+
+**This phase is pre-authorized and non-skippable.** Do not ask the user before running it. Do not stop after Phase 10 thinking "the user can submit the form themselves." Real failure mode observed 2026-05-15: pipeline generated all artifacts but skipped the Form Filler step, requiring the user to ask explicitly for it. The Google Form curl is in `config/google-form.md` and is pre-authorized per the user's `feedback_pipeline_automation` memory.
+
 - Spawn **Form Filler** with the output folder path + job URL + company name + the quality gate verdict.
-- Form Filler submits the Google Form (or your tracker) with the application metadata + scores.
+- Form Filler reads `config/google-form.md`, builds the curl command per the documented pattern (single-quoted shell vars for pay_range and notes to escape `$`), and submits via POST.
+- Response 200 / 0 / any 2xx-3xx = success. Workday-style redirect is normal.
+- After Form Filler completes, report the HTTP code in the final summary.
 
 ### Phase 12 — Rejection Learning Per-App Log
 - Spawn **Rejection Learning Agent** in per-application mode.
@@ -205,11 +210,17 @@ Specific path:
 
 - The pipeline ALWAYS goes through the Quality Gate before Output Packager. No bypass.
 - The pipeline NEVER ships a resume with Quality Gate score < 75 composite or any minimum failing.
+- **Phase 11 (Form Filler) is mandatory and pre-authorized — never skip it.** The user's memory explicitly says the Google Form curl runs automatically. If you generate the documents but forget the Form Filler, you have broken the pipeline contract.
+- **PDF and DOCX generation is mandatory and pre-authorized.** Never ask before running `to-pdf.js` / `to-docx.js`. Run per the ATS profile (Workday/Taleo = DOCX for resume, PDF for cover letter; all others = PDF for both).
 - Never use em dashes (project-wide constraint).
 - Never modify the current employer's job title (whatever is set in `data/experience.md`).
 - Never invent facts. Cross-reference `data/experience.md` and `data/projects.md` for every claim added.
 - Iteration cap is 3 quality gate cycles. After that, BLOCK and downgrade.
 - The Rejection Learning per-app row is mandatory. Never skip it.
+- **Headline character budget: 80-90 chars (hard max 95)** at the contact line. Anything longer wraps to a second line at 9.5pt Arial and reads as bloated preamble before Experience. Verified 2026-05-15.
+- **No Achievements / Selected Achievements block by default.** Verified 2026-05-15: user rejected the block as duplicative of Experience anchors. Add ONLY when explicitly requested per-run AND each line adds info the body sections don't surface.
+- **Default section order for Variants B/C/D: Experience above Projects.** Verified 2026-05-15: projects-first ordering was rejected as reading "junior / new grad."
+- **Cover letter date: use today's date dynamically**, not the date of any cached job-analysis.json.
 
 ---
 
