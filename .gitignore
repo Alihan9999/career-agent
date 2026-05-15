@@ -41,6 +41,9 @@ analysis/
 scans/*/
 !scans/.gitkeep
 
+# Scratch directory for spider JSON dumps and one-off filter outputs
+_tmp/
+
 # Project schematics (reveals skill gaps and job search strategy — keep private)
 projects/
 
