@@ -6,20 +6,21 @@ The goal is not "test five variants and pick the winner." It is "use the right r
 
 ---
 
-## Default shape (updated 2026-05-15)
+## Default shape (updated 2026-05-17)
 
-After the Fabletics 2026-05-14 run, the user explicitly rejected the previous Variant B/C/D shape (headline + Selected Achievements block + Projects above Experience). New defaults for Variants B/C/D:
+The user rejected both the original v2 shape (headline + Selected Achievements + Projects-first) AND the interim 80-90 char headline pattern. The current default for ALL variants (A/B/C/D/E):
 
 1. Header (`# NAME` + contact line)
-2. **Headline** — one bold line, **80-90 chars (hard max 95)** to fit one line at 9.5pt Arial without wrap
-3. `## Professional Experience` (Experience above Projects)
-4. `## Projects` (not "Projects")
-5. `## Technical Skills`
-6. `## Education`
+2. `## Professional Experience` (Experience above Projects)
+3. `## Projects` (not "Selected Projects")
+4. `## Technical Skills`
+5. `## Education`
 
-**No "Selected Achievements" block by default.** The Experience and Projects bullets carry the anchor metrics already — a separate Achievements block restates them and bloats the top of the resume. Add an `**Achievements**` block (no "Selected" prefix) only when the user explicitly requests it AND each line adds information the body sections don't surface.
+**No headline under the contact line.** (Updated 2026-05-17.) The prior 80-90 char headline rule was retired because every anchor a headline would carry is already repeated in body bullets, and the headline burned a line of vertical space the 1-page budget needed. Drop straight from the contact line to `## Professional Experience`.
 
-**Section labels never carry a "Selected" prefix.** Use `## Projects` not `## Projects`.
+**No "Selected Achievements" block by default.** The Experience and Projects bullets carry the anchor metrics already; a separate Achievements block restates them and bloats the top of the resume. Add an `**Achievements**` block (no "Selected" prefix) only when the user explicitly requests it AND each line adds information the body sections don't surface.
+
+**Section labels never carry a "Selected" prefix.** Use `## Projects` not `## Selected Projects`.
 
 This is a hard departure from the v2 spec written in May 2026 — keep the new shape as default until conversion data indicates otherwise.
 
@@ -59,12 +60,7 @@ This is a hard departure from the v2 spec written in May 2026 — keep the new s
 - Design-forward / developer-tools companies.
 - Any company where the recruiter scans 50+ resumes per day and the 6-second scan is the binding constraint.
 
-**Section order:** Use the default shape (Header + Headline → Professional Experience → Projects → Skills → Education). **No Achievements block by default.**
-
-**Headline:** pulled from `data/headline-bank.md` Variant B set (B1-B4), 80-90 chars. Names role + 3 anchors. Example (B1):
-```
-**Platform Engineer | K8s operator in Go, ArgoCD GitOps, $30k/month FinOps platform**
-```
+**Section order:** Use the default shape (Header → Professional Experience → Projects → Skills → Education). **No headline. No Achievements block by default.**
 
 **Bullet posture:** shorter bullets (15-20 words). Strong verbs, named systems, exact metrics (no tildes). Bold sparingly.
 
@@ -72,7 +68,7 @@ This is a hard departure from the v2 spec written in May 2026 — keep the new s
 
 **Cover letter:** strong hook on a specific JD detail; one story deep; closing question that exposes operational thinking.
 
-**Anti-pattern:** do not use for Taleo or iCIMS-strict — the headline gets ignored by literal token matchers, costing keyword density for no recruiter benefit. Use Variant A for those.
+**Anti-pattern:** the visual posture (terse bullets, bold sparingly) underperforms on Taleo / iCIMS-strict where literal token matching favors longer comma-dense bullets. Use Variant A for those ATSes.
 
 ---
 
@@ -84,9 +80,9 @@ This is a hard departure from the v2 spec written in May 2026 — keep the new s
 - Platform Engineer / SRE roles at infra-native companies (Grafana, Datadog, Tailscale, Vercel, Cloudflare, Cockroach, Fabletics-style hybrid EKS + on-prem).
 - Any role where the homelab's K8s + GitOps + OTel stack maps directly to the JD's primary stack.
 
-**Section order:** Use the default shape (Header + Headline → Professional Experience → Projects → Skills → Education). **No Achievements block by default.** Experience leads — the user explicitly rejected Projects-first ordering on 2026-05-14 because it bloated the top of the resume and read as "junior / new grad" to anyone expecting traditional resume shape.
+**Section order:** Use the default shape (Header → Professional Experience → Projects → Skills → Education). **No headline. No Achievements block by default.** Experience leads — the user explicitly rejected Projects-first ordering on 2026-05-14 because it bloated the top of the resume and read as "junior / new grad" to anyone expecting traditional resume shape.
 
-**Headline emphasis:** Platform Engineer (NOT "Platform / SRE Engineer" — drop the SRE half because SRE-titled family is 0/30 in conversion data). Lead with K8s + GitOps + OTel anchors. Pull from `data/headline-bank.md` C1-C3.
+**Positioning:** Platform Engineer framing surfaces through the first Experience bullet and the homelab Projects header, NOT a headline. Drop the "SRE" label even for SRE-titled roles because SRE-titled family is 0/30 in conversion data.
 
 **Renaming:** "Homelab Platform" → "Production Kubernetes Platform (Homelab)" in the Projects section header to give the project weight without overclaiming.
 
@@ -106,12 +102,9 @@ This is a hard departure from the v2 spec written in May 2026 — keep the new s
 - AI-native startups building agent platforms.
 - Developer-tools companies with active AI angles (LangChain, LlamaIndex, Tavily, etc.).
 
-**Section order:** Use the default shape (Header + Headline → Professional Experience → Projects → Skills → Education). **No Achievements block by default.** Projects section includes 0rca first, Career Agent second, Homelab third — but stays at the bottom of the resume per the 2026-05-14 user preference.
+**Section order:** Use the default shape (Header → Professional Experience → Projects → Skills → Education). **No headline. No Achievements block by default.** Projects section includes 0rca first, Career Agent second, Homelab third — but stays at the bottom of the resume per the 2026-05-14 user preference.
 
-**Headline emphasis:** "LLM-Infrastructure / Multi-Agent" positioning. Pull from `data/headline-bank.md` D1-D3. Example (D1):
-```
-**LLM-Infrastructure Engineer | 28-agent DAG orchestrator, 9-agent MCP pipeline, K8s in Go**
-```
+**Positioning:** LLM-Infrastructure / Multi-Agent framing surfaces through the first Projects bullet (0rca DAG orchestrator), NOT a headline.
 
 **0rca framing:** lead with "Designed a DAG-based task orchestration engine running up to 4 parallel agent streams across a 3-tier hierarchy of 28+ agents" — this is the wow item.
 

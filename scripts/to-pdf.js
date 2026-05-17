@@ -72,54 +72,60 @@ function buildResumeCss({ padding, lineHeight, sectionGap, bulletGap, skillsLine
   `;
 }
 
-const coverLetterCss = `
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 11pt;
-    line-height: 1.65;
-    color: #1a1a1a;
-    padding: 0 0.85in 0.85in;
-    width: ${LETTER_WIDTH_PX}px;
-    background: #fff;
-  }
+function buildCoverLetterCss({ padding, lineHeight, paragraphGap, headerGap, fontSize }) {
+  return `
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: ${fontSize}pt;
+      line-height: ${lineHeight};
+      color: #1a1a1a;
+      padding: ${padding}in ${padding}in;
+      width: ${LETTER_WIDTH_PX}px;
+      background: #fff;
+    }
 
-  /* Full-bleed dark navy name header */
-  h1 {
-    background: #1B2A4A;
-    color: #fff;
-    font-size: 23pt;
-    font-weight: 700;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    padding: 0.42in 0.85in 0.13in;
-    margin: 0 -0.85in;
-  }
+    /* Letterhead name — navy text, no background */
+    h1 {
+      color: #1B2A4A;
+      font-size: 20pt;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
 
-  /* Contact info row — still inside navy header, red accent underline */
-  h1 + p {
-    background: #1B2A4A;
-    color: #9FBAD9;
-    font-size: 9.5pt;
-    letter-spacing: 0.4px;
-    padding: 0.07in 0.85in 0.28in;
-    margin: 0 -0.85in 0;
-    border-bottom: 4px solid #C0392B;
-  }
-  h1 + p a { color: #9FBAD9; }
+    /* Contact line directly under name, with thin navy rule below */
+    h1 + p {
+      color: #1B2A4A;
+      font-size: 10pt;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+      padding-bottom: 6px;
+      border-bottom: 1.5px solid #1B2A4A;
+      margin-bottom: ${headerGap}px;
+    }
+    h1 + p a { color: #1B2A4A; text-decoration: none; }
 
-  /* Date paragraph — first element after header accent */
-  h1 + p + p {
-    margin-top: 0.38in;
-    font-size: 10.5pt;
-    color: #555;
-    margin-bottom: 16px;
-  }
+    p {
+      font-size: ${fontSize}pt;
+      line-height: ${lineHeight};
+      color: #1a1a1a;
+      margin-bottom: ${paragraphGap}px;
+    }
+    a { color: #1B2A4A; text-decoration: none; }
+    hr { display: none; }
+  `;
+}
 
-  p { margin-bottom: 13px; }
-  a { color: #1B2A4A; text-decoration: none; }
-  hr { display: none; }
-`;
+const coverLetterSpacingSteps = [
+  { padding: 0.85, lineHeight: 1.60, paragraphGap: 13, headerGap: 22, fontSize: 11 },
+  { padding: 0.75, lineHeight: 1.55, paragraphGap: 11, headerGap: 18, fontSize: 11 },
+  { padding: 0.70, lineHeight: 1.50, paragraphGap: 10, headerGap: 16, fontSize: 11 },
+  { padding: 0.65, lineHeight: 1.45, paragraphGap:  9, headerGap: 14, fontSize: 10.5 },
+  { padding: 0.60, lineHeight: 1.42, paragraphGap:  8, headerGap: 12, fontSize: 10.5 },
+  { padding: 0.55, lineHeight: 1.38, paragraphGap:  7, headerGap: 10, fontSize: 10.5 },
+];
 
 const spacingSteps = [
   { padding: 0.60, lineHeight: 1.50, sectionGap: 14, bulletGap: 5, skillsLineHeight: 1.65, projectNameGap: 6 },
@@ -143,37 +149,35 @@ const spacingSteps = [
 
   await page.setViewport({ width: LETTER_WIDTH_PX, height: LETTER_HEIGHT_PX });
 
-  const css = isCoverLetter ? coverLetterCss : null;
-  const steps = isCoverLetter ? [null] : spacingSteps;
+  const fitSteps = isCoverLetter ? coverLetterSpacingSteps : spacingSteps;
+  const buildCss = isCoverLetter ? buildCoverLetterCss : buildResumeCss;
 
-  let chosenCss = css;
+  let chosenCss = null;
   let chosenStep = null;
   let finalHeight = 0;
 
-  if (!isCoverLetter) {
-    for (const step of spacingSteps) {
-      const stepCss = buildResumeCss(step);
-      await page.setContent(`<html><head><style>${stepCss}</style></head><body>${html}</body></html>`, { waitUntil: 'domcontentloaded' });
+  for (const step of fitSteps) {
+    const stepCss = buildCss(step);
+    await page.setContent(`<html><head><style>${stepCss}</style></head><body>${html}</body></html>`, { waitUntil: 'domcontentloaded' });
 
-      const scrollHeight = await page.evaluate(() => document.body.scrollHeight);
-      console.log(`  padding=${step.padding}in lineHeight=${step.lineHeight} → content height: ${scrollHeight}px (limit: ${LETTER_HEIGHT_PX}px)`);
+    const scrollHeight = await page.evaluate(() => document.body.scrollHeight);
+    console.log(`  padding=${step.padding}in lineHeight=${step.lineHeight} → content height: ${scrollHeight}px (limit: ${LETTER_HEIGHT_PX}px)`);
 
-      if (scrollHeight <= LETTER_HEIGHT_PX) {
-        chosenCss = stepCss;
-        chosenStep = step;
-        finalHeight = scrollHeight;
-        console.log(`✓ Fits at padding=${step.padding}in, lineHeight=${step.lineHeight}`);
-        break;
-      }
+    if (scrollHeight <= LETTER_HEIGHT_PX) {
+      chosenCss = stepCss;
+      chosenStep = step;
+      finalHeight = scrollHeight;
+      console.log(`✓ Fits at padding=${step.padding}in, lineHeight=${step.lineHeight}`);
+      break;
     }
+  }
 
-    if (!chosenCss) {
-      const last = spacingSteps[spacingSteps.length - 1];
-      chosenCss = buildResumeCss(last);
-      chosenStep = last;
-      finalHeight = LETTER_HEIGHT_PX;
-      console.warn('⚠ Could not fit on 1 page at minimum spacing — content needs to be shortened.');
-    }
+  if (!chosenCss) {
+    const last = fitSteps[fitSteps.length - 1];
+    chosenCss = buildCss(last);
+    chosenStep = last;
+    finalHeight = LETTER_HEIGHT_PX;
+    console.warn('⚠ Could not fit on 1 page at minimum spacing — content needs to be shortened.');
   }
 
   // Final render + PDF export
@@ -181,7 +185,7 @@ const spacingSteps = [
 
   const pdfBuffer = await page.pdf({
     format: 'Letter',
-    printBackground: false,
+    printBackground: true,
     margin: { top: '0', right: '0', bottom: '0', left: '0' },
   });
 

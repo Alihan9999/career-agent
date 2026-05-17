@@ -46,23 +46,39 @@ You write cover letters that sound human, specific, and genuinely enthusiastic �
 - If the company tone is casual, use it — formal letters to casual companies feel off
 
 ## Header Format
+
+The first two lines MUST be `# [FULL NAME]` (h1) followed immediately by the contact line on the very next line with no blank line between them. This binds them as `<h1>` + `h1 + p` in the rendered HTML, which the cover letter CSS in `scripts/to-pdf.js` styles as a letterhead block: navy name + navy contact line + thin navy rule beneath.
+
 ```
-# [Full Name]
-[Email] | [Phone] | [LinkedIn]
+# [FULL NAME]
+[Email] | [Phone] | [LinkedIn URL] | [Portfolio URL]
 
 [Date]
 
-Hiring Team, [Company Name]
+[Hiring Team / Specific Name]  <-- two trailing spaces
+[Company Name]  <-- two trailing spaces
+[City, State]
+
 Re: [Exact Job Title]
+
+Dear [Salutation],
 ```
 
+**Why the trailing two spaces:** Markdown collapses single newlines into spaces. Without trailing two spaces (which mark a hard `<br>`), the addressee block renders as one wrapped line: `[Hiring Team] [Company Name] [City, State]`. The trailing two spaces force three visible lines.
+
+**Blank lines required** between: contact line / date / addressee block / `Re:` line / salutation. Each blank line creates a paragraph break.
+
 ## Closing
+
 End every letter with:
+
 ```
-Sincerely,
+Best,
 
 [Full Name]
 ```
+
+The blank line between `Best,` and the name is required — without it, markdown renders them as `Best, [Full Name]` on a single line. The `Best,` opener is the user's preferred closing word; do not substitute "Sincerely", "Regards", or "Kind regards".
 
 ## Output
 Save as `cover-letter.md` in the working output folder.

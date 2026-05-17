@@ -217,7 +217,7 @@ Specific path:
 - Never invent facts. Cross-reference `data/experience.md` and `data/projects.md` for every claim added.
 - Iteration cap is 3 quality gate cycles. After that, BLOCK and downgrade.
 - The Rejection Learning per-app row is mandatory. Never skip it.
-- **Headline character budget: 80-90 chars (hard max 95)** at the contact line. Anything longer wraps to a second line at 9.5pt Arial and reads as bloated preamble before Experience. Verified 2026-05-15.
+- **No headline under the contact line.** Drop straight from the contact line to `## Professional Experience`. Verified 2026-05-17: the user rejected the prior "80-90 char headline" pattern because every anchor a typical headline would carry is already repeated in body bullets, and the headline burned a line of vertical space that the 1-page-fit budget needed. This supersedes the prior 80-90 char rule.
 - **No Achievements / Selected Achievements block by default.** Verified 2026-05-15: user rejected the block as duplicative of Experience anchors. Add ONLY when explicitly requested per-run AND each line adds info the body sections don't surface.
 - **Default section order for Variants B/C/D: Experience above Projects.** Verified 2026-05-15: projects-first ordering was rejected as reading "junior / new grad."
 - **Cover letter date: use today's date dynamically**, not the date of any cached job-analysis.json.
