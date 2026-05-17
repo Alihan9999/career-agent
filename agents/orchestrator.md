@@ -67,10 +67,20 @@ If the user passes `--override` for this gate, log the override in the applicati
 ### Gate 3: Role Type
 - Outside DevOps / SRE / Platform / Infrastructure / Security: flag, ask.
 
-### Gate 4: Legitimacy
+### Gate 4: Remote Policy (STRICT)
+The candidate is remote-only (per `data/personal-info.md` and the user's standing instruction). Apply these rules:
+- JD is remote-allowed (remote-only, remote-first, remote-or-HQ, fully distributed, "work from anywhere"): PROCEED.
+- JD requires hybrid (e.g., "3 days/week in office", "must be in [city]"): HARD SKIP.
+- JD is on-site only with no remote option: HARD SKIP.
+- JD is ambiguous (location listed but remote policy unspecified): flag, ask.
+- User may override per-run with `--allow-hybrid` or `--allow-onsite`. The decision agent still receives the flag and may down-classify.
+
+### Gate 5: Legitimacy
 - `HIGH_CONFIDENCE`: continue.
 - `PROCEED_WITH_CAUTION`: display flags, continue.
 - `SUSPICIOUS`: display flags, ask user.
+
+> Note: Gate 5 was previously numbered Gate 4 before the Remote Policy gate was added on 2026-05-17.
 
 ---
 

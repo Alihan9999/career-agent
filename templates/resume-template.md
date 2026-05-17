@@ -135,6 +135,7 @@ If only two projects qualify after applying this rule, use two — a tight two-p
 - Blank lines are required so each row renders as a separate line in the PDF
 - Only include skills at Proficient or Expert level (from skills.md)
 - Use exact terminology from the job posting where possible
+- **Tool names only — no scale or quantity annotations.** Never append parenthetical metrics to a tool in the skills section (NOT `[Tool] (X TB/day)`, NOT `[Tool] (N+ servers)`). Scale lives in Experience/Projects bullets where it has context. Feature-mode qualifiers that name a deployment style (e.g., `Istio (ambient mTLS)`, `ArgoCD (app-of-apps)`) are OK because they describe the tool's variant, not its scale.
 
 ## Education Format
 ```
