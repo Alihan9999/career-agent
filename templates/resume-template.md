@@ -136,6 +136,7 @@ If only two projects qualify after applying this rule, use two — a tight two-p
 - Only include skills at Proficient or Expert level (from skills.md)
 - Use exact terminology from the job posting where possible
 - **Tool names only — no scale or quantity annotations.** Never append parenthetical metrics to a tool in the skills section (NOT `[Tool] (X TB/day)`, NOT `[Tool] (N+ servers)`). Scale lives in Experience/Projects bullets where it has context. Feature-mode qualifiers that name a deployment style (e.g., `Istio (ambient mTLS)`, `ArgoCD (app-of-apps)`) are OK because they describe the tool's variant, not its scale.
+- **No padding duplicates.** A tool may appear in two categories only when it serves two genuinely distinct functions for the candidate (e.g., a platform that is both an API integration target AND a runtime / operational platform). Padding duplicates — where the same tool is listed twice because it fits two categories descriptively, not functionally — are not OK. Common padding traps to remove: a service listed in a cloud-provider inventory AND under Identity & Access (the discipline lives in Identity & Access; the cloud inventory is a different surface), or in a cloud-provider inventory AND under Observability (Observability is the better home for tools used primarily for alerting / metrics / auto-scaling). When in doubt, ask: "Does this tool serve two genuinely different functions in the candidate's work, or am I just listing it twice for keyword density?"
 
 ## Education Format
 ```
