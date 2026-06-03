@@ -20,53 +20,81 @@ function buildResumeCss({ padding, lineHeight, sectionGap, bulletGap, skillsLine
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: Arial, Helvetica, sans-serif;
-      font-size: 10pt;
+      font-size: 9.5pt;
       line-height: ${lineHeight};
       color: #000;
-      padding: ${padding}in 0.75in;
+      padding: ${padding}in 0.55in;
       width: ${LETTER_WIDTH_PX}px;
     }
     h1 {
       text-align: center;
-      font-size: 22pt;
+      font-size: 19pt;
       font-weight: bold;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
+      letter-spacing: 1px;
     }
     h1 + p {
       text-align: center;
-      font-size: 9.5pt;
-      margin-bottom: ${Math.round(sectionGap * 0.8)}px;
+      font-size: 9pt;
+      margin-bottom: ${Math.round(sectionGap * 0.7)}px;
     }
     h2 {
-      font-size: 11pt;
+      font-size: 10.5pt;
       font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
       margin-top: ${sectionGap}px;
-      margin-bottom: 4px;
-      border-bottom: 1.5px solid #000;
-      padding-bottom: 2px;
-      text-transform: none;
-      letter-spacing: 0;
+      margin-bottom: 3px;
+      border-bottom: 1px solid #000;
+      padding-bottom: 1px;
     }
     p {
-      font-size: 10pt;
+      font-size: 9.5pt;
       margin-bottom: 2px;
       line-height: ${lineHeight};
     }
+    .job, .project {
+      margin-top: ${Math.max(4, Math.round(sectionGap * 0.45))}px;
+      margin-bottom: 1px;
+    }
+    .job-line1, .job-line2, .project-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      line-height: 1.25;
+    }
+    .job-line1 strong, .project-line strong {
+      font-size: 10pt;
+      font-weight: bold;
+    }
+    .job-line2 em {
+      font-size: 9pt;
+      font-style: italic;
+    }
+    .project-line em {
+      font-size: 9pt;
+      font-style: italic;
+    }
+    .job-line1 span, .job-line2 span, .project-line span {
+      font-size: 9pt;
+    }
     ul {
       list-style: none;
-      padding-left: 18px;
-      margin: 2px 0 ${bulletGap}px 0;
+      padding-left: 14px;
+      margin: 1px 0 ${bulletGap}px 0;
     }
     li {
-      font-size: 10pt;
+      font-size: 9.5pt;
       line-height: ${lineHeight};
-      margin-bottom: ${Math.max(1, Math.round(bulletGap * 0.4))}px;
-      text-indent: -11px;
-      padding-left: 11px;
+      margin-bottom: ${Math.max(0, Math.round(bulletGap * 0.3))}px;
+      text-indent: -9px;
+      padding-left: 9px;
     }
-    li::before { content: "● "; font-size: 7.5pt; }
-    ul + p { margin-top: ${projectNameGap}px; margin-bottom: 1px; }
-    .edu-row { display: flex; justify-content: space-between; font-size: 10pt; }
+    li::before { content: "● "; font-size: 6.5pt; }
+    ul + p, ul + .job, ul + .project { margin-top: ${projectNameGap}px; margin-bottom: 1px; }
+    .skills-line { font-size: 9.5pt; line-height: 1.35; margin-bottom: 1px; padding-left: 9px; text-indent: -9px; }
+    .skills-line::before { content: "● "; font-size: 6.5pt; }
+    .edu-row { display: flex; justify-content: space-between; font-size: 9.5pt; }
     a { color: #000; text-decoration: none; }
     hr { display: none; }
   `;

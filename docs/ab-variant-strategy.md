@@ -92,27 +92,15 @@ This is a hard departure from the v2 spec written in May 2026 — keep the new s
 
 ---
 
-## Variant D — Automation / Project-Heavy
+## Variant D — Automation / Project-Heavy — RETIRED 2026-05-17
 
-**Lead story:** "This person is an LLM-infrastructure / multi-agent engineer who also has 3 years of DevOps."
+**Status:** Retired. The variant was built around leading Projects with 0rca + Career Agent. Both are now off-limits:
+- **Career Agent** is off-limits per user feedback: surfacing it on resumes reveals the candidate is using an AI-powered job application system, which is a recruiter anti-signal. See `memory/feedback_no_career_agent_on_resume.md` (also referenced in `data/projects.md`).
+- **0rca** has the unresolved security flag (live API keys in plaintext `.env`, no `.gitignore` confirmation). Per `data/projects.md`, 0rca cannot appear on the resume until the keys are rotated and the repo is cleaned up.
 
-**Use for:**
-- Anthropic-adjacent companies (Anthropic itself, Claude API integrations, MCP-leveraging companies).
-- OpenAI-infra, OpenAI Codex Platform, OpenAI Operator.
-- AI-native startups building agent platforms.
-- Developer-tools companies with active AI angles (LangChain, LlamaIndex, Tavily, etc.).
+**What to do for AI-native target companies (Anthropic, OpenAI-infra, AI-native startups):** Use Variant C (homelab-led) with the AI / Generative AI skills row kept in the Technical Skills section (Claude Code, MCP, prompt engineering, RAG patterns as generic skills) but NOT a Career Agent project entry. The homelab is the lead project; AI-tooling signal lives in the skills row and optionally one generic cover letter sentence ("a multi-agent MCP pipeline I wrote for myself", without naming Career Agent).
 
-**Section order:** Use the default shape (Header → Professional Experience → Projects → Skills → Education). **No headline. No Achievements block by default.** Projects section includes 0rca first, Career Agent second, Homelab third — but stays at the bottom of the resume per the 2026-05-14 user preference.
-
-**Positioning:** LLM-Infrastructure / Multi-Agent framing surfaces through the first Projects bullet (0rca DAG orchestrator), NOT a headline.
-
-**0rca framing:** lead with "Designed a DAG-based task orchestration engine running up to 4 parallel agent streams across a 3-tier hierarchy of 28+ agents" — this is the wow item.
-
-**Career Agent framing:** lead with "Built a 9-agent MCP pipeline orchestrating job application workflow via Claude Code and MCP servers."
-
-**Experience section:** compressed to 3-4 of the strongest bullets. The AI projects do the heavy lifting.
-
-**Anti-pattern:** do not use for traditional enterprise SRE — the AI-projects-first framing will be filtered as off-topic.
+This effectively merges what Variant D used to do into Variant C with an AI-skill-overlay. When the user resolves the 0rca security flag, Variant D may be revived as a 0rca-only variant.
 
 ---
 
